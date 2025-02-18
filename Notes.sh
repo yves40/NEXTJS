@@ -1,3 +1,4 @@
+# Start NextJS training
 # Install next and the app creation tool in the top directory ( here NEXTJS )
 npm install next@latest --save
 npm install create-next-app@latest --save

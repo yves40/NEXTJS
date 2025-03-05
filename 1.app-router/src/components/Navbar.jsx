@@ -13,6 +13,7 @@ function Navbar() {
       <Link className={` ${pathname === "/blog" && "bg-red-700 text-white p-2 rounded-md"}`} href="/blog">Blog</Link>
       <Link className={` ${pathname === "/dashboard" && "bg-red-700 text-white p-2 rounded-md"}`} href="/dashboard">Dashboard</Link>
       <Link className={` ${pathname === "/contact" && "bg-red-700 text-white p-2 rounded-md"}`}  href="/contact">Contact</Link>
+      <Link className={` ${pathname === "/users" && "bg-red-700 text-white p-2 rounded-md"}`}  href="/users">Utilisateurs</Link>
     </nav>
   )
 }

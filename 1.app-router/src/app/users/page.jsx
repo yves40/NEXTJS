@@ -2,9 +2,14 @@ import React from 'react'
 
 async function page() {
 
-  const users = await new Promise( resolve => {
+  // const users = await new Promise( resolve => {
+  //   setTimeout(() => {
+  //     resolve([ 'Victor', 'Sarah', 'Anna', 'Isabelle', 'Sophie'])
+  //   }, 4000);
+  // })
+  const users = await new Promise( (resolve, reject) => {
     setTimeout(() => {
-      resolve([ 'Victor', 'Sarah', 'Anna', 'Isabelle', 'Sophie'])
+      reject( new Error('Big problem on server'))
     }, 4000);
   })
 

@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Navbar></Navbar>
+        {/* <Navbar></Navbar> */}
         {children}
         <hr />
         <p className=" text-center text-slate-600 pt-10 pb-10">Text in the layout main</p>

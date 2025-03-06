@@ -5,14 +5,10 @@ async function page() {
   const users = await new Promise( resolve => {
     setTimeout(() => {
       resolve([ 'Victor', 'Sarah', 'Anna', 'Isabelle', 'Sophie'])
-    }, 4000);
+    }, 2000);
   })
-  // const users = await new Promise( (resolve, reject) => {
-  //   setTimeout(() => {
-  //     reject( new Error('Big problem on server'))
-  //   }, 4000);
-  // })
 
+  
   return (
     <main className=' mt-12'>
       <p className=" text-2xl font-semibold text-gray-800 mb-4 mx-4">Users</p>

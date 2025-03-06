@@ -1,10 +1,10 @@
-import Navbar from '@/components/Navbar'
+import NavbarMarketing from '@/components/NavbarMarketing'
 
 
 function layout({children}) {
   return (
     <>
-      <Navbar></Navbar>
+      <NavbarMarketing></NavbarMarketing>
       {children}
     </>
   )

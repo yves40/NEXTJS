@@ -9,7 +9,7 @@ function Navbar() {
 
   return (
     <nav className=' flex gap-x-2 justify-center items-center my-8'>
-      <Link className='  text-2xl text-green-700' href="/">Accueil</Link>
+      <Link className=' text-green-700' href="/">Accueil</Link>
       <Link className={` ${pathname === "/blog" && "bg-red-700 text-white p-2 rounded-md"}`} href="/blog">Blog</Link>
       <Link className={` ${pathname === "/dashboard" && "bg-red-700 text-white p-2 rounded-md"}`} href="/dashboard">Dashboard</Link>
       <Link className={` ${pathname === "/contact" && "bg-red-700 text-white p-2 rounded-md"}`}  href="/contact">Contact</Link>

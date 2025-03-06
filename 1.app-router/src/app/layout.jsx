@@ -8,12 +8,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body>
         {/* <Navbar></Navbar> */}
         {children}
         <hr />
-        <p className=" text-center text-slate-600 pt-10 pb-10">Text in the layout main</p>
+        <p className=" text-center text-slate-600 pt-10 pb-10">Text in the Root layout</p>
         <hr />
       </body>
     </html>

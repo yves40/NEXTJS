@@ -1,16 +1,16 @@
 import React from 'react'
+import { getImage } from '@/lib/serveraction';
 
 async function page() {
-
-  const cat = await fetch('https://cataas.com/cat');
-  const cats10 = await fetch('https://cataas.com/api/cats?limit=4');
-  const mycats = await cats10.json();
 
   // const res = await fetch("https://jsonplaceholder.typicode.com/photos/3")
   // const imgdata = await res.json();
   // console.log(imgdata);
   // via site no longer working
-  console.log(cat);
+
+  const cats10 = await fetch('https://cataas.com/api/cats?limit=4');
+  const mycats = await cats10.json();
+  const cat = await getImage();
   
   // console.log(mycats);  // Does not give the URL !!  
 

@@ -15,7 +15,7 @@ async function blog() {
         { posts.map( post => ( 
           <Link href={`/blog/${post.id}`} key={post.id} className="block p-4 bg-white shadow-lg rounded-lg
                        hover:bg-gray-200 transition duration-200">
-            <h2 className=' text-xl mb-2 font-semibold'>{post.title}</h2>
+            <h2 className=' text-xl mb-2 font-semibold dark:text-gray-600'>{post.title}</h2>
             <p className=' text-gray-600'>{post.body.slice(0, 100)}</p>
           </Link>
         ))}

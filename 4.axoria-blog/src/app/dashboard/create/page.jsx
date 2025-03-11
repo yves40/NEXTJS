@@ -22,7 +22,7 @@ export default function () {
         focus:outline-slate-400" 
           id="title" required placeholder="Your article title"/>
         <label htmlFor="markdownArticle" className="f-label">
-          Write ypur article. Use markdown to get a smart view for users</label>
+          Write your article. Use markdown to get a smart view for users</label>
         <a className="block mb-4 text-blue-600" target="_blank" href="https://www.markdownguide.org/cheat-sheet/">
           How to use markdown syntax ?</a>
         <textarea name="markdownArticle" id="markdownArticle" 

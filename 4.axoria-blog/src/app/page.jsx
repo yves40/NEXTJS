@@ -1,5 +1,4 @@
 import Link from "next/link"
-import connectToDB  from "@/lib/utils/db/connectToDB"
 
 const fakeposts = [
   {
@@ -25,8 +24,6 @@ const fakeposts = [
 ]
 
 export default async function Home() {
-
-  await connectToDB();
 
   return (
     // u-main-container is defined in globals.css 

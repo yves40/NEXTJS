@@ -1,8 +1,10 @@
+"use server"
+
 import mongoose from "mongoose";
 
-export default async function connectToDB() {
+export async function connectToDB() {
 
-  const modulename = "DBUTILS # ";
+  const modulename = "***** DBUTILS # ";
 
   if(mongoose.connection.readyState) {
     console.log(`${modulename} Using existing connection : ${mongoose.connection.name}`);

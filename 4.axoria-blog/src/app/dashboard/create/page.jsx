@@ -1,16 +1,24 @@
 "use client"
+import { addPost } from "@/lib/serverActions/blog/postServerActions"
 
 export default function () {
 
-  function handleSubmit(e) {
+  const modulename = "***** BLOG # ";
+
+  async function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
-    formData.forEach( (data, idx) => {
-      console.log(data);
-    })
-    for(const [key, value] of formData.entries()) {
-      console.log(key, value);
+    // for(const [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
+    try {
+      const result = await addPost(formData);
+      console.log(`${modulename}${result.success} : created with slug ${result.slug}`);
+    } 
+    catch(error) {
+      console.log(`${modulename} post not created : ${error}`);
     }
+    
   }
 
   return (

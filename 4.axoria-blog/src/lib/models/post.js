@@ -26,11 +26,11 @@ postSchema.pre("save", async function (next) {
   console.log(`${modulename} Check the slug`);  
   if(!this.slug) {  // slug passed by caller ?     
     let slugCandidate = slugify(this.title, { lower: true, strict:true, replacement: '_' });
-    let slugExists = await mongoose.models.Post.findOne({slug: slugCandidate}).exec();
+    let slugExists = await Post.findOne({slug: slugCandidate}).exec();
     let counter = 1;  // Verify no collision with existing slug
     while(slugExists) {
       slugCandidate = `${slugCandidate}-${counter}`;
-      slugExists = await mongoose.models.Post.findOne({slug: slugCandidate}).exec();  // Recheck
+      slugExists = await Post.findOne({slug: slugCandidate}).exec();  // Recheck
       counter++;
     }
     this.slug = slugCandidate;

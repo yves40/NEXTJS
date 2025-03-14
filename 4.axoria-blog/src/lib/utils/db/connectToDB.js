@@ -7,7 +7,7 @@ export async function connectToDB() {
   const modulename = "***** DBUTILS # ";
 
   if(mongoose.connection.readyState) {
-    console.log(`${modulename} Using existing connection : ${mongoose.connection.name}`);
+    // console.log(`${modulename} Using existing connection : ${mongoose.connection.name}`);
     return;
   }
   try {

@@ -1,3 +1,5 @@
+import { getPosts } from "@/lib/serverMethods/blog/postMethods";
+import { connectToDB } from "@/lib/utils/db/connectToDB"
 import Link from "next/link"
 
 const fakeposts = [
@@ -25,6 +27,10 @@ const fakeposts = [
 
 export default async function Home() {
 
+  await connectToDB();
+  const posts = await getPosts(); // Display current posts
+  const fakeauthor = 'John Doe';
+
   return (
     // u-main-container is defined in globals.css 
     <div className="u-main-container u-padding-content-container">
@@ -35,7 +41,7 @@ export default async function Home() {
       <p className=" mr-4 text-md text-zinc-900">Latest articles</p>
       <ul className="u-articles-grid">
           {
-            fakeposts.map( (post, id) => (
+            posts.map( (post, id) => (
               <li key={id} className=" rounded-sm shadow-md hover:shadow-xl border hover:border-zinc-300">
                 <div className=" pt-5 px-5 pb-7">
                   <div className="flex items-baseline gap-x-4 text-xs">
@@ -46,13 +52,14 @@ export default async function Home() {
                         day: "numeric"
                       })}
                     </time>
-                    <Link href={`/categories/author/${post.author}`} className=" ml-auto text-base text-gray-70
+                    <Link href={`/categories/author/${fakeauthor}`} className=" ml-auto text-base text-gray-70
                       hover:text-gray-600 whitespace-nowrap truncate">
-                      {post.author}
+                      {fakeauthor}
                     </Link>
                   </div>
-                  <Link href={`/article/${post.title}`} className=" inline-block mt-6 font-semibold text-zinc-800
+                  <Link href={`/article/${post.slug}`} className=" inline-block mt-6 font-semibold text-zinc-800
                     hover:text-zinc-600">{post.title}</Link>
+                  <p className="">{post.markdownArticle}</p>
                 </div>
               </li>
             ))

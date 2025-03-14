@@ -45,11 +45,13 @@ export default async function Home() {
               <li key={id} className=" rounded-sm shadow-md hover:shadow-xl border hover:border-zinc-300">
                 <div className=" pt-5 px-5 pb-7">
                   <div className="flex items-baseline gap-x-4 text-xs">
-                    <time dateTime={new Date().toISOString()} className=" text-gray-500 text-sm">
-                      {new Date().toLocaleDateString("en-EN", {
+                    <time dateTime={post.createdAt} className=" text-gray-500 text-sm">
+                      {new Date(post.createdAt).toLocaleDateString("en-EN", {
                         year: "numeric",
                         month: "long",
-                        day: "numeric"
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
                       })}
                     </time>
                     <Link href={`/categories/author/${fakeauthor}`} className=" ml-auto text-base text-gray-70

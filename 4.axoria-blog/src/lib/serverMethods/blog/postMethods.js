@@ -5,7 +5,10 @@ export async function getPost(slug) {
     try 
     {
         await connectToDB();
-        const post = await Post.findOne({slug});
+        const post = await Post.findOne({slug}).populate({
+            path: "tags",
+            select: "name slug"
+        });
         return post;
     }
     catch(error){

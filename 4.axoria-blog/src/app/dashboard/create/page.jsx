@@ -1,9 +1,12 @@
 "use client"
 import { addPost } from "@/lib/serverActions/blog/postServerActions"
+import { useState, useRef } from "react";
 
 export default function () {
 
   const modulename = "***** BLOG # ";
+  const [tags, setTags] = useState(["css", "javascript", "Cobol"]);
+  const tagInputRef = useRef(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -20,6 +23,12 @@ export default function () {
     }
     
   }
+  function handleAddTag() {
+    console.log("*** Add tag");    
+  }
+  function handleRemoveTag(tag) {
+    console.log("*** Remove tag");    
+  }
 
   return (
     <main className='u-main-container bg-white p-7 mt-32 mb-44'>
@@ -29,6 +38,25 @@ export default function () {
         <input type="text" name="title" className=" shadow border rounded w-full p-3 mb-7 text-gray-700
         focus:outline-slate-400" 
           id="title" required placeholder="Your article title"/>
+        {/* Tags */}
+        <div className=" mb-10">
+          <label htmlFor="tag" className="f-label">Add a tag(s) (optional, max 5)</label>
+          <div className="flex">
+            <input type="text" className=" shadow border rounded p-3 text-gray-700 focus:outline-slate-400"
+              id="tag" placeholder="Add a tag" ref={tagInputRef}/>
+            <button className=" bg-indigo-500 text-white font-bold p-4 rounded mx-4"
+              onClick={handleAddTag} type="button"
+              >Add</button>
+            <div className=" flex items-center grow whitespace-nowrap overflow-y-auto shadow border rounded px-3">
+              {tags.map((tag) => (
+                <span key={tag} className=" inline-block whitespace-nowrap bg-gray-200 text-gray-700
+                 rounded-full px-3 py-1 text-sm font-semibold mr-2">{tag} 
+                  <button className=" text-red-500 ml-2" type="button" onClick={handleRemoveTag(tag)}>&times;</button>
+                 </span>
+              ))}
+            </div>
+          </div>
+        </div>
         <label htmlFor="markdownArticle" className="f-label">
           Write your article. Use markdown to get a smart view for users</label>
         <a className="block mb-4 text-blue-600" target="_blank" href="https://www.markdownguide.org/cheat-sheet/">

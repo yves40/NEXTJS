@@ -3,6 +3,7 @@ import  { connectToDB } from "@/lib/utils/db/connectToDB"
 import { Post } from "@/lib/models/post";
 import { Tag } from "@/lib/models/tag";
 import slugify from "slugify";
+import { split } from "postcss/lib/list";
 
 export async function addPost(formData) { 
 
@@ -24,7 +25,8 @@ export async function addPost(formData) {
       }
       return tag._id;
     }))
-    
+    console.log(tagIds);    
+    // const tagIdsArray = tagIds.split(',', tagIds);
     const newPost = new Post({
       title, 
       markdownArticle,

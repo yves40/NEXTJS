@@ -51,8 +51,8 @@ export default function () {
               {tags.map((tag) => (
                 <span key={tag} className=" inline-block whitespace-nowrap bg-gray-200 text-gray-700
                  rounded-full px-3 py-1 text-sm font-semibold mr-2">{tag} 
-                  <button className=" text-red-500 ml-2" type="button" onClick={handleRemoveTag(tag)}>&times;</button>
-                 </span>
+                  <button className=" text-red-500 ml-2" type="button" onClick={ () => handleRemoveTag(tag)}>&times;</button>
+                </span>
               ))}
             </div>
           </div>

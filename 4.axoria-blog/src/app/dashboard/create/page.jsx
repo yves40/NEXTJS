@@ -6,15 +6,14 @@ import { useState, useRef } from "react";
 export default function () {
 
   const modulename = "***** BLOG # ";
-  const [tags, setTags] = useState(["css", "javascript"]);
+  const [tags, setTags] = useState([]);
   const tagInputRef = useRef(null);
   // -----------------------------------------------------------------------------------
   async function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
-    // for(const [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
+    formData.set("tags", JSON.stringify(tags))  // To handle post creation without any tag !
+                                                // post model now contains a tags array property
     try {
       const result = await addPost(formData);
       console.log(`${modulename}${result.success} : created with slug ${result.slug}`);

@@ -16,14 +16,15 @@ const postSchema = new mongoose.Schema({
   slug: {
     type: String,
     unique: true
-  }
+  },
+  tags: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Tag"
+  }]
 },
 {timestamps: true})
 
-console.log(`${modulename} Post instanciated`);
-
 postSchema.pre("save", async function (next) { 
-  console.log(`${modulename} Check the slug`);  
   if(!this.slug) {  // slug passed by caller ?     
     let slugCandidate = slugify(this.title, { lower: true, strict:true, replacement: '_' });
     let slugExists = await Post.findOne({slug: slugCandidate}).exec();

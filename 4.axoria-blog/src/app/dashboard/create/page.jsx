@@ -1,13 +1,14 @@
 "use client"
+
 import { addPost } from "@/lib/serverActions/blog/postServerActions"
 import { useState, useRef } from "react";
 
 export default function () {
 
   const modulename = "***** BLOG # ";
-  const [tags, setTags] = useState(["css", "javascript", "Cobol"]);
+  const [tags, setTags] = useState(["css", "javascript"]);
   const tagInputRef = useRef(null);
-
+  // -----------------------------------------------------------------------------------
   async function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -23,12 +24,28 @@ export default function () {
     }
     
   }
-  function handleAddTag() {
-    console.log("*** Add tag");    
+  // -----------------------------------------------------------------------------------
+  function handleAddTag(e) {
+    e.preventDefault();
+    const newtag = tagInputRef.current.value.trim().toLowerCase();  // Check tag uniqueness
+    if(newtag !== "" && !tags.includes(newtag) && tags.length <= 4){
+      setTags([...tags, newtag]);
+      tagInputRef.current.value = "";
+    }
+
   }
-  function handleRemoveTag(tag) {
-    console.log("*** Remove tag");    
+  // -----------------------------------------------------------------------------------
+  function handleRemoveTag(tagToRemove) {
+    setTags(tags.filter( tag => tag !== tagToRemove));
   }
+  // -----------------------------------------------------------------------------------
+  function handleEnterOnTagInput(e) {
+    if(e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag(e);
+    }
+  }
+
 
   return (
     <main className='u-main-container bg-white p-7 mt-32 mb-44'>
@@ -43,7 +60,7 @@ export default function () {
           <label htmlFor="tag" className="f-label">Add a tag(s) (optional, max 5)</label>
           <div className="flex">
             <input type="text" className=" shadow border rounded p-3 text-gray-700 focus:outline-slate-400"
-              id="tag" placeholder="Add a tag" ref={tagInputRef}/>
+              id="tag" placeholder="Add a tag" ref={tagInputRef} onKeyDown={handleEnterOnTagInput}/>
             <button className=" bg-indigo-500 text-white font-bold p-4 rounded mx-4"
               onClick={handleAddTag} type="button"
               >Add</button>

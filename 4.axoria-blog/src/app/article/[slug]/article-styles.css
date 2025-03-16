@@ -17,3 +17,13 @@
 .article-styles li {
     margin-bottom: 4px;
 }
+/* For the code color highlighting in articles */
+.article-styles pre {
+    display: block;
+    margin: 24px 24px 32px !important;
+    border-radius: 5px;
+    background-color: #060606;
+}
+.article-styles pre code {
+    font-size: 18px;
+}

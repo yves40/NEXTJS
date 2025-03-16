@@ -6,6 +6,11 @@ import slugify from "slugify";
 import { marked  } from "marked";
 import { JSDOM } from "jsdom";
 import createDOMPurify from "dompurify";  // Used to sanitize the markdwon
+import Prism, { highlight } from "prismjs"
+import { markedHighlight } from "marked-highlight";
+import "prismjs/components/prism-markup"
+import "prismjs/components/prism-css"
+import "prismjs/components/prism-javascript"
 
 // This code is used to cleanup HTML from potential XSS attacks
 // As it is executed on the server side, the first step is to create a DOM onto which 
@@ -33,7 +38,19 @@ export async function addPost(formData) {
       }
       return tag._id;
     }))
+
     // Manage the markdown content
+    // Add code highlighting is any code in the markedownArticle content
+    // Support html css and js.
+    // Uses Prismjs libs
+    marked.use(
+      markedHighlight({
+        highlight: (code, language) => {
+          const validLanguage = Prism.languages[language] ? language : 'plaintext';
+          return Prism.highlight(code, Prism.languages[validLanguage], validLanguage)
+        }
+      })
+    )
     // Transforms the markdown into HTML syntax 
     let markdownHTMLResult = marked(markdownArticle);
     // Proceed to sanitization of the content ( XSS attacks )

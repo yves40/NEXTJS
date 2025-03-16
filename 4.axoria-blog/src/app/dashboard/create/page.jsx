@@ -2,26 +2,47 @@
 
 import { addPost } from "@/lib/serverActions/blog/postServerActions"
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 export default function () {
 
   const modulename = "***** BLOG # ";
   const [tags, setTags] = useState([]);
   const tagInputRef = useRef(null);
+  const submitButtonRef = useRef(null);
+  const serverValidationText = useRef(null);
+  const router = useRouter();
+
   // -----------------------------------------------------------------------------------
   async function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     formData.set("tags", JSON.stringify(tags))  // To handle post creation without any tag !
                                                 // post model now contains a tags array property
+    serverValidationText.current.textContent = ""; // Reset message
+    submitButtonRef.current.textContent = 'Saving post ...';
+    submitButtonRef.current.disabled = true;  // Post sent, button is inactive
     try {
       const result = await addPost(formData);
-      console.log(`${modulename}${result.success} : created with slug ${result.slug}`);
+      if(result.success) {
+        submitButtonRef.current.textContent = 'Post saved ✅';
+        let countdown = 3;
+        serverValidationText.current.textContent = `Redirecting ${countdown}...`;
+        const interval = setInterval(() => {
+          countdown -= 1;
+          serverValidationText.current.textContent = `Redirecting ${countdown}...`;
+          if(countdown === 0) {
+            clearInterval(interval);
+            router.push(`/article/${result.slug}`); // In case of success route to display the article
+          }
+        }, 1000);
+      }
     } 
     catch(error) {
-      console.log(`${modulename} post not created : ${error}`);
+      submitButtonRef.current.textContent = 'Submit';
+      serverValidationText.current.textContent = `${error.message}`;
+      submitButtonRef.current.disabled = false;
     }
-    
   }
   // -----------------------------------------------------------------------------------
   function handleAddTag(e) {
@@ -31,7 +52,6 @@ export default function () {
       setTags([...tags, newtag]);
       tagInputRef.current.value = "";
     }
-
   }
   // -----------------------------------------------------------------------------------
   function handleRemoveTag(tagToRemove) {
@@ -81,9 +101,10 @@ export default function () {
           className=" min-h-44 text-xl shadow appearance-none border rounded w-full p-8
          text-gray-700 mb-4 focus:outline-slate-400"></textarea>
         <button className=" min-w-44 bg-indigo-500 hover:bg-indigo-700 text-white font-bold
-         py-3 px-4 rounded border-none mb-4">
+         py-3 px-4 rounded border-none mb-4" ref={submitButtonRef}>
           Submit
         </button>
+        <p ref={serverValidationText}></p>
       </form>
     </main>
   )

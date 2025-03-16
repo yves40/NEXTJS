@@ -65,8 +65,8 @@ export async function addPost(formData) {
       markdownHTMLResult,
       tags: tagIds
     })
-    console.log(`***************** Object saved ${JSON.stringify(newPost)}`);
     const savedPost = await newPost.save();    
+    console.log(`***************** Object saved ${JSON.stringify(newPost)}`);
     return { success: true, slug: newPost.slug }
   }
   catch(err) {

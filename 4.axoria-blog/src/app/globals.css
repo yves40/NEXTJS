@@ -31,3 +31,7 @@ body {
 .f-label {
   @apply block mb-2 text-gray-700 font-semibold;
 }
+/* Register page */
+.f-auth-input {
+  @apply w-full mb-4 p-4 focus:outline-slate-400 border rounded;
+}

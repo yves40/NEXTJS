@@ -22,7 +22,7 @@ export default function page() {
     return (
         <div className='u-main-container u-padding-content-container 
                     flex flex-col mx-auto text-center background-slate-500'>
-            <h1 className=' text-lg mb-10'>Sign Up</h1>
+            <h1 className='mb-10 text-2xl'>Sign Up</h1>
             <div className='w-7/8 md:w-1/2 border rounded shadow-md background-slate-900 text-left mx-auto
                     m-4 p-4'>
                 <form onSubmit={handleSubmit}>

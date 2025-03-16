@@ -1,6 +1,7 @@
 
 import { getPost } from "@/lib/serverMethods/blog/postMethods"
-import Link from "next/link";
+import Link from "next/link"
+import "./article-styles.css"
 
 export default async function page({params}) {
 

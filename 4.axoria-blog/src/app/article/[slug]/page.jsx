@@ -16,7 +16,8 @@ export default async function page({params}) {
                     <Link key={tag.slug} className=" mr-4 underline" href={`categories/tag/${tag.slug}`}>#{tag.name}</Link>
                 )) }
             </p>
-            <p>{post.markdownArticle}</p>
+            {/* <p>{post.markdownArticle}</p> */}
+            <div className="article-styles" dangerouslySetInnerHTML={{ __html: post.markdownHTMLResult}}></div>
         </main>
     </div>
     )

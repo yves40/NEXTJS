@@ -3,7 +3,9 @@ import  { connectToDB } from "@/lib/utils/db/connectToDB"
 import { Post } from "@/lib/models/post";
 import { Tag } from "@/lib/models/tag";
 import slugify from "slugify";
-import { split } from "postcss/lib/list";
+import { marked  } from "marked";
+import { JSDOM } from "jsdom";
+import createDOMPurify from "dompurify";  // Used to sanitize the markdwon
 
 export async function addPost(formData) { 
 
@@ -25,11 +27,14 @@ export async function addPost(formData) {
       }
       return tag._id;
     }))
-    console.log(tagIds);    
-    // const tagIdsArray = tagIds.split(',', tagIds);
+    // Manage the markdown content
+    // Transforms the markdown into HTML syntax 
+    let markdownHTMLResult = marked(markdownArticle);
+    // Save the post now
     const newPost = new Post({
       title, 
       markdownArticle,
+      markdownHTMLResult,
       tags: tagIds
     })
     console.log(`***************** Object saved ${JSON.stringify(newPost)}`);

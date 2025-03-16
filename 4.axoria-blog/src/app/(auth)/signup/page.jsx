@@ -26,7 +26,6 @@ export default function page() {
         try {
             const result = await register(new FormData(e.target));            
             if(result.success) {
-            // if(true) {
                 submitButton.current.textContent = 'User saved ✅';
                 let countdown = 3;
                 serverInfo.current.textContent = `Redirecting ${countdown}...`;
@@ -38,6 +37,10 @@ export default function page() {
                     router.push(`/signin`); // In case of success route to login page
                   }
                 }, 1000);        
+            }
+            else {
+                serverInfo.current.textContent = result.message;
+                serverInfo.current.style.color = 'red';
             }
         }
         catch(error) {

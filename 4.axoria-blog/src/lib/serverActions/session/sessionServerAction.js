@@ -11,23 +11,28 @@ export async function register(formData) {
 
     try {
         if(userName < 3) {
-            throw new Error("Pseudo too short, at least 3 characters");
+            // throw new Error("Pseudo too short, at least 3 characters");
+            return { success: false, message: 'User name too short, at least 3 characters' };
         }
         const validEmail = emailregex.test(email);
         if(!validEmail) {
-            throw new Error("Invalid email");
+            // throw new Error("Invalid email");
+            return { success: false, message: 'Invalid email' };
         }
         if(password < 6) {
-            throw new Error("password must have at least 6 characters");
+            // throw new Error("password must have at least 6 characters");
+            return { success: false, message: 'password must have at least 6 characters' };
         }
         if(password !== confpassword) {
-            throw new Error("password and confirm password must be the same");
+            // throw new Error("password and confirm password must be the same");
+            return { success: false, message: 'password and confirm password must be the same' };
         }
     
         connectToDB();
         const user = await User.findOne({userName});
         if(user) {
-            throw new Error("User already exists, sory !");
+            // throw new Error("User already exists, sory !");
+            return { success: false, message: 'User already exists' };
         }
         const normalizedUserName = slugify(userName, {lower:true,strict:true});
         const salt = await bcrypt.genSalt(10);

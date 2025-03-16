@@ -7,6 +7,12 @@ import { marked  } from "marked";
 import { JSDOM } from "jsdom";
 import createDOMPurify from "dompurify";  // Used to sanitize the markdwon
 
+// This code is used to cleanup HTML from potential XSS attacks
+// As it is executed on the server side, the first step is to create a DOM onto which 
+// cleaning will take place.
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
+
 export async function addPost(formData) { 
 
   const modulename = "***** SERVERACTIONS # ";
@@ -30,6 +36,11 @@ export async function addPost(formData) {
     // Manage the markdown content
     // Transforms the markdown into HTML syntax 
     let markdownHTMLResult = marked(markdownArticle);
+    // Proceed to sanitization of the content ( XSS attacks )
+    // To test create an article with this content in the markdown: 
+    // <img src="x" onerror="alert('XSS')" style="display: none;"/>
+    // after commenting the sanitize() line...
+    markdownHTMLResult = DOMPurify.sanitize(markdownHTMLResult);
     // Save the post now
     const newPost = new Post({
       title, 

@@ -1,32 +1,11 @@
-import { getPosts } from "@/lib/serverMethods/blog/postMethods";
-import { connectToDB } from "@/lib/utils/db/connectToDB"
 import Link from "next/link"
+import { getPosts } from "@/lib/serverMethods/blog/postMethods";
+import { connectToDB } from "@/lib/utils/db/connectToDB";
 
-const fakeposts = [
-  {
-    author: 'John Doe',
-    title: '5 CSS tricks'
-  },
-  {
-    author: 'Victor Wallas',
-    title: 'How to code a Navbar'
-  },
-  {
-    author: 'Jean Dupont',
-    title: 'How to setup TS'
-  },
-  {
-    author: 'Isabelle Sodernous',
-    title: 'Launching satellites is not a small business'
-  },
-  {
-    author: 'Yves Oracleous',
-    title: 'Proprietary software cannot be as good as open source software'
-  },
-]
 
 export default async function Home() {
 
+  connectToDB();
   const posts = await getPosts(); // Display current posts
   const fakeauthor = 'John Doe';
 

@@ -10,16 +10,17 @@ const modulename = "SECURITY # ";
 export async function sessionInfo() {
 
     const cookieStore = await cookies();
-    const sessionId = cookieStore.get("sessionId")?.value;
+    const userCookieId = cookieStore.get("sessionId")?.value;
 
-    if (!sessionId) {
+    if (!userCookieId) {  // No cookie yet !
         console.log(`${modulename} user KO : Navigator sessionCookie`);      
         return { success: false };
     }
     await connectToDB();
-    // Check the session
-    console.log(`${modulename} Search for this user session in DB : ${sessionId}`);      
-    const session = await Session.findById(sessionId);
+    // Check the user session in the DB
+    console.log(`${modulename} Search user with ID ${userCookieId} in DB `);      
+    const session = await Session.findOne({ userId: userCookieId });
+    console.log(`${modulename} ${session ? session.userId : 'No user session in DB'}`);          
     if(!session || session.expiresAt < new Date()) { // Inexistent or expired session ?
         console.log(`${modulename} user KO : DB sessionCookie`);      
         return { success: false };

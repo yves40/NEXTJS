@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 const modulename = "***** MODELS # ";
 
 const sessionSchema = new mongoose.Schema({
-  userID: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "User"

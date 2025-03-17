@@ -61,7 +61,7 @@ export default async function Home() {
                   </div>
                   <Link href={`/article/${post.slug}`} className=" inline-block mt-6 font-semibold text-zinc-800
                     hover:text-zinc-600">{post.title}</Link>
-                  <p className="">{post.markdownArticle}</p>
+                  {/* <p className="">{post.markdownArticle}</p> */}
                 </div>
               </li>
             ))

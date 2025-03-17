@@ -41,6 +41,7 @@ export default function page() {
             else {
                 serverInfo.current.textContent = result.message;
                 serverInfo.current.style.color = 'red';
+                submitButton.current.disabled = false;
             }
         }
         catch(error) {

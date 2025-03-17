@@ -27,7 +27,6 @@ const fakeposts = [
 
 export default async function Home() {
 
-  await connectToDB();
   const posts = await getPosts(); // Display current posts
   const fakeauthor = 'John Doe';
 

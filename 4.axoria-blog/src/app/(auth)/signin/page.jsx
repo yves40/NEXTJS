@@ -14,9 +14,9 @@ export default function page() {
 
   async function handleSubmit(e) {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      const formdataObj = Object.fromEntries(formData);
-      console.log(JSON.stringify(formdataObj));
+      // const formData = new FormData(e.target);
+      // const formdataObj = Object.fromEntries(formData);
+      // console.log(JSON.stringify(formdataObj));
       serverInfo.current.textContent = "";
       submitButton.current.disabled = true;
 

@@ -7,6 +7,9 @@ import slugify from "slugify";
 import bcrypt from 'bcryptjs';
 import { cookies } from "next/headers";
 
+
+const modulename = "SECURITY # ";
+
 // -----------------------------------------------------------------------------------------
 // Register
 // -----------------------------------------------------------------------------------------
@@ -50,7 +53,7 @@ export async function register(formData) {
             password: hashedPassword
         })
         await newUser.save();
-        console.log(`saved user to DB : ${JSON.stringify(newUser)}`);
+        console.log(`${modulename} saved user to DB : ${JSON.stringify(newUser)}`);
         return { success: true };
     }
     catch(error) {
@@ -63,8 +66,8 @@ export async function register(formData) {
 export async function login(formData) {
 
     const { userName, password } = Object.fromEntries(formData);
-    const msexpirationDelay = 1 * 24 * 60 * 60 * 1000;  // One day expiration date for Session
-    const sexpirationDelay = 1 * 24 * 60 * 60; // One day expiration date for Cookie
+    const DBExpirationDelay = 1 * 24 * 60 * 60 * 1000;  // One day expiration date for DBSession (msec )
+    const CookieExpirationDelay = 1 * 24 * 60 * 60;              // One day expiration date for Cookie (sec)
     try {
         await connectToDB();
         const user = await User.findOne({ userName: userName });
@@ -75,22 +78,27 @@ export async function login(formData) {
         if(!isPasswordOK) {
             throw new Error('Invalid credentials');
         }
-        // User authenticated. Create a session and a cookie but first check there is no existing session
-        // for this user
+        // User authenticated. Create a session and a cookie or update an existing session
+        // for this user ( in the DB )
+        console.log(`${modulename} search a session with userID : ${user.userID}`);        
         let session;
         const existingSession = await Session.findOne({
-            userId: user._id,
+            userId: user.userID,
             expiresAt: { $gt : new Date()} // Check the expire date of the existing session is not expired
         })
-        if(existingSession) {
-            session = existingSession;
-            existingSession.expiresAt = new Date(Date.now() + msexpirationDelay); 
-            await existingSession.save();   // Push to mongo
+        console.log(`${modulename} Existing session ${existingSession ? existingSession._id : 'New session created'}`);       
+        if(existingSession) {   // Update the existing session
+            console.log(`${modulename} Updating existing session in Mongo for user ${user.userName}`);            
+            session = await Session.findOneAndUpdate({ 
+                userId: user._id,
+                expiresAt: new Date(Date.now() + DBExpirationDelay)
+            });
         }
         else {
+            console.log(`${modulename} Creating a session in Mongo for user ${user.userName}`);            
             session = new Session( { 
                 userID: user._id,
-                expiresAt: new Date(Date.now() + msexpirationDelay)
+                expiresAt: new Date(Date.now() + DBExpirationDelay)
             })
             await session.save();   // Push to mongo
         }
@@ -99,7 +107,7 @@ export async function login(formData) {
             httpOnly: true, // No JS access
             secure: process.env.NODE_ENV === "production", // If prod, use HTTP for requests
             path: '/', // Use cookie for all APP pages. Could be restrained to sensitive pages
-            maxAge: sexpirationDelay,   // One day persistence
+            maxAge: CookieExpirationDelay,   // One day persistence
             sameSite: "Lax" // To block CSRF attacks. Cookie is sent only to our site. Look at https://contentsquare.com/fr-fr/blog/samesite-cookie-attribute/
         });
         return { success: true };

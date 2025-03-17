@@ -70,7 +70,7 @@ export default function page() {
                      ref={submitButton}>Submit</button>
                 </form>
             </div>
-            <p ref={serverInfo} className=' text-center my-4'></p>
+            <p ref={serverInfo} className=' text-center my-4'>Status</p>
             <Link href={"/signin"} className=' mt-6 text-blue-500 underline'>Already have an account ? Log In</Link>
         </div>
     )

@@ -16,7 +16,8 @@ const sessionSchema = new mongoose.Schema({
   },
   expiresAt: {
     type: Date,
-    required: true
+    required: true,
+    index: { expireAfterSeconds: 0 } // Used to shoot the session after expiration 
   }
 })
 export const Session = mongoose.models?.Session || mongoose.model("Session", sessionSchema);

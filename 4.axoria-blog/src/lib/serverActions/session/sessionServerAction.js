@@ -1,10 +1,15 @@
 "use server"
 
 import { User } from "@/lib/models/user";
+import { Session } from "@/lib/models/session";
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import slugify from "slugify";
 import bcrypt from 'bcryptjs';
+import { cookies } from "next/headers";
 
+// -----------------------------------------------------------------------------------------
+// Register
+// -----------------------------------------------------------------------------------------
 export async function register(formData) {
     const { userName, email, password, confpassword } = Object.fromEntries(formData);
     const emailregex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;        
@@ -51,5 +56,56 @@ export async function register(formData) {
     catch(error) {
         throw new Error(error.message || 'An error occured while registering the user')
     }
+}
+// -----------------------------------------------------------------------------------------
+// Login
+// -----------------------------------------------------------------------------------------
+export async function login(formData) {
 
+    const { userName, password } = Object.fromEntries(formData);
+    const msexpirationDelay = 1 * 24 * 60 * 60 * 1000;  // One day expiration date for Session
+    const sexpirationDelay = 1 * 24 * 60 * 60; // One day expiration date for Cookie
+    try {
+        await connectToDB();
+        const user = await User.findOne({ userName: userName });
+        if(!user) {
+            throw new Error('Invalid credentials');
+        }
+        const isPasswordOK = await bcrypt.compare(password, user.password);
+        if(!isPasswordOK) {
+            throw new Error('Invalid credentials');
+        }
+        // User authenticated. Create a session and a cookie but first check there is no existing session
+        // for this user
+        let session;
+        const existingSession = await Session.findOne({
+            userId: user._id,
+            expiresAt: { $gt : new Date()} // Check the expire date of the existing session is not expired
+        })
+        if(existingSession) {
+            session = existingSession;
+            existingSession.expiresAt = new Date(Date.now() + msexpirationDelay); 
+            await existingSession.save();   // Push to mongo
+        }
+        else {
+            session = new Session( { 
+                userID: user._id,
+                expiresAt: new Date(Date.now() + msexpirationDelay)
+            })
+            await session.save();   // Push to mongo
+        }
+        const cookieStore = await cookies();
+        cookieStore.set('sessionId', session.userID.toString(), { 
+            httpOnly: true, // No JS access
+            secure: process.env.NODE_ENV === "production", // If prod, use HTTP for requests
+            path: '/', // Use cookie for all APP pages. Could be restrained to sensitive pages
+            maxAge: sexpirationDelay,   // One day persistence
+            sameSite: "Lax" // To block CSRF attacks. Cookie is sent only to our site. Look at https://contentsquare.com/fr-fr/blog/samesite-cookie-attribute/
+        });
+        return { success: true };
+    }
+    catch(error) {
+        console.log('Error while login');
+        throw new Error(error.message);        
+    }
 }

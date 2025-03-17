@@ -1,8 +1,9 @@
 "use client"
 
 import { useRef } from "react";
-import { useRouter } from "next/navigation";
 import Link from 'next/link';
+import { login } from "@/lib/serverActions/session/sessionServerAction";
+import { useRouter } from "next/navigation";
 
 export default function page() {
   const userName = useRef('');
@@ -16,6 +17,20 @@ export default function page() {
       const formData = new FormData(e.target);
       const formdataObj = Object.fromEntries(formData);
       console.log(JSON.stringify(formdataObj));
+      serverInfo.current.textContent = "";
+      submitButton.current.disabled = true;
+
+      try {
+        const result = await login(new FormData(e.target));
+        if(result.success) {
+          router.push('/');
+        }
+      }
+      catch(error) {
+        console.error(error.message);
+        submitButton.current.disabled = false;
+        serverInfo.current.textContent = error.message;
+      }
   }
       
       

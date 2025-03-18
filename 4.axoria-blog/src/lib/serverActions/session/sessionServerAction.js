@@ -142,9 +142,9 @@ export async function logout() {
     }
 }
 export async function isPrivatePage(pathname) {
-    
-    console.log(`${modulename} check ${pathname} privacy`);
 
+    console.log(`${modulename} check ${pathname} privacy`);
+    
     const privateSegments = [ 
         "/dashboard", 
         "/settings/profile",
@@ -152,7 +152,9 @@ export async function isPrivatePage(pathname) {
         "/internals",
         "/signout"];   // Protected paths
 
-    privateSegments.map(path => console.log(`${modulename} will check ${pathname} privacy`));
+    privateSegments.map(path => {
+        console.log(`${modulename} will check ${path} privacy`)
+    });
     return privateSegments.some(segment => pathname === segment || 
         pathname.startsWith(segment + "/")); // Waouh !!!
 }

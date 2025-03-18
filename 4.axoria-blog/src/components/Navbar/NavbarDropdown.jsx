@@ -37,14 +37,14 @@ export default function NavbarDropdown() {
     // Manage logout
     async function handleLogout() {
         await logout();
-        if(isPrivatePage(window.location.pathname)) {
+        if(await isPrivatePage(window.location.pathname)) {
             console.log(`${modulename} ${window.location.pathname} is a private page`);
             router.push('/signin');
         }
         else {
             console.log(`${modulename} ${window.location.pathname} is a public page`);
         }
-    }
+    }    
 
     return (
         <div ref={dropDownRef} className=" relative">

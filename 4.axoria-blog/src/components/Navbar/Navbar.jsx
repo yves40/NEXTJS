@@ -1,12 +1,14 @@
 
 import Link from "next/link"
-import { sessionInfo } from "@/lib/serverMethods/sessionMethods"
+import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods"
 import NavbarDropdown from "./NavbarDropdown";
+
+const modulename = 'UIX # ';
 
 export default async function Navbar() {
 
-  const session = await sessionInfo();
-  console.log(session);
+  const sessionStatus = await sessionInfo();
+  console.log(`${modulename} ${JSON.stringify(sessionStatus)}`);
   
 
   return (
@@ -15,7 +17,7 @@ export default async function Navbar() {
       <div className="u-main-container flex py-4">
           <Link href="/" className=" mr-2 text-zinc-900">AXORIA</Link>
           <Link href="/categories" className=" mx-2 text-zinc-900 mr-auto">Categories</Link>
-          { session.success ? (
+          { sessionStatus.success ? (
             <>
               <Link href="/dashboard/create" className=" mx-2 text-zinc-900">Add an article</Link>
               <NavbarDropdown></NavbarDropdown>

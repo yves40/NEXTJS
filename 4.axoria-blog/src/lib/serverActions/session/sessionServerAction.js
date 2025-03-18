@@ -131,7 +131,7 @@ export async function logout() {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",         // If prod, use HTTP for requests
             path: '/',
-            maxAge: 0,  // maxAge to 0 deletes the cookie
+            maxAge: 0,  // maxAge set to 0 deletes the cookie
             sameSite: "strict"
         });
         return { success: true }
@@ -140,4 +140,19 @@ export async function logout() {
         console.log(error);
         
     }
+}
+export async function isPrivatePage(pathname) {
+    
+    console.log(`${modulename} check ${pathname} privacy`);
+
+    const privateSegments = [ 
+        "/dashboard", 
+        "/settings/profile",
+        "/secret",
+        "/internals",
+        "/signout"];   // Protected paths
+
+    privateSegments.map(path => console.log(`${modulename} will check ${pathname} privacy`));
+    return privateSegments.some(segment => pathname === segment || 
+        pathname.startsWith(segment + "/")); // Waouh !!!
 }

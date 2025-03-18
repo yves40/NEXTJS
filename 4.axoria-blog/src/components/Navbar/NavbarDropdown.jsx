@@ -4,12 +4,15 @@ import { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { logout } from "@/lib/serverActions/session/sessionServerAction"
+import { logout, isPrivatePage } from "@/lib/serverActions/session/sessionServerAction"
+
+const modulename = "UIX # ";
 
 export default function NavbarDropdown() {
 
     const [isOpen, setIsOpen ] = useState(false);
     const dropDownRef = useRef();
+    const router = useRouter();
 
     // Close Dropdown
     function closeDropDown() {
@@ -34,6 +37,13 @@ export default function NavbarDropdown() {
     // Manage logout
     async function handleLogout() {
         await logout();
+        if(isPrivatePage(window.location.pathname)) {
+            console.log(`${modulename} ${window.location.pathname} is a private page`);
+            router.push('/signin');
+        }
+        else {
+            console.log(`${modulename} ${window.location.pathname} is a public page`);
+        }
     }
 
     return (

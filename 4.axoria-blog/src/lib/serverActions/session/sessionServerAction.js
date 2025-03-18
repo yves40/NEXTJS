@@ -115,6 +115,29 @@ export async function login(formData) {
     }
     catch(error) {
         console.log('Error while login');
-        throw new Error(error.message);        
+        throw new Error(error.message);    
+
+    }
+}
+// -----------------------------------------------------------------------------------------
+// Logout
+// -----------------------------------------------------------------------------------------
+export async function logout() {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get('sessionId')?.value;
+    try {
+        await Session.findOneAndDelete({ userId: userId });        // Shoot the DB session
+        cookieStore.set('sessionId', "", {                         // Shoot the cookie
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",         // If prod, use HTTP for requests
+            path: '/',
+            maxAge: 0,  // maxAge to 0 deletes the cookie
+            sameSite: "strict"
+        });
+        return { success: true }
+    }
+    catch(error) {
+        console.log(error);
+        
     }
 }

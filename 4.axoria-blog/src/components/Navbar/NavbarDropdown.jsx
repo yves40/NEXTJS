@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { logout } from "@/lib/serverActions/session/sessionServerAction"
 
 export default function NavbarDropdown() {
 
@@ -31,8 +32,8 @@ export default function NavbarDropdown() {
         setIsOpen(!isOpen);
     }
     // Manage logout
-    function handleLogout() {
-
+    async function handleLogout() {
+        await logout();
     }
 
     return (

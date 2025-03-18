@@ -1,9 +1,9 @@
 "use server"
 
 import { cookies } from "next/headers";
-import { Session } from "../models/session";
-import { User } from "../models/user";
-import { connectToDB } from "../utils/db/connectToDB";
+import { Session } from "../../models/session";
+import { User } from "../../models/user";
+import { connectToDB } from "../../utils/db/connectToDB";
 
 const modulename = "SECURITY # ";
 

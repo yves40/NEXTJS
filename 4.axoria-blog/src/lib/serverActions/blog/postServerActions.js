@@ -11,6 +11,8 @@ import { markedHighlight } from "marked-highlight";
 import "prismjs/components/prism-markup"
 import "prismjs/components/prism-css"
 import "prismjs/components/prism-javascript"
+import AppError from "@/lib/utils/errorHandling/customError";
+import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
 
 // This code is used to cleanup HTML from potential XSS attacks
 // As it is executed on the server side, the first step is to create a DOM onto which 
@@ -24,9 +26,28 @@ export async function addPost(formData) {
   const { title, markdownArticle, tags} = Object.fromEntries(formData);
 
   try {
+
+    // Some back end controls !!!
+    if(typeof title !== 'string' || title.trim.length() < 3) {
+      throw new AppError('Invalid data');
+    }
+    if(typeof markdownArticle !== 'string' || markdownArticle.trim.length() === 0) {
+      throw new AppError('Invalid data');
+    }
     await connectToDB();
+    const session = await sessionInfo();
+    if(!session.success) {
+      throw new AppError('Authenitcation required');
+    }
+    if(typeof tags !== 'string') {
+      throw new AppError('Invalid data');
+    }
     // Manage optional tags : if any they are passed as a JSON string
     const tagNamesArray = JSON.parse(tags);
+    if(!Array.isArray(tagNamesArray)) {
+      throw new AppError('tags must be a valid array');
+    }
+
     // Promise.all() is used to wait for all Promises to finish
     // as the create() are started with parallelism
     const tagIds = await Promise.all(tagNamesArray.map(async (tagName) => {
@@ -69,8 +90,11 @@ export async function addPost(formData) {
     console.log(`***************** Object saved ${JSON.stringify(newPost)}`);
     return { success: true, slug: newPost.slug }
   }
-  catch(err) {
-    console.log(`${modulename} Error during post creation: ${err}`);
-    throw new Error(err.message || "Error during post creation")
+  catch(error) {
+    console.log(`Error while creating the post ${error}`);
+    if(error instanceof AppError) {
+      throw error;      // Send this application error to the caller
+    }
+    throw new Error('An error occured while creating the post'); // Send a generic message for any non App error
   }
 }

@@ -20,6 +20,7 @@ export default function NavbarDropdown() {
     }
     // Handle a click outside the dropdown
     useEffect( () => {
+        document.addEventListener("click", handleClickOutside);
         function handleClickOutside(event) {
             if(!dropDownRef.current.contains(event.target)) {
                 closeDropDown();
@@ -28,7 +29,6 @@ export default function NavbarDropdown() {
         return () => {
             document.removeEventListener("click", handleClickOutside);
         }
-        document.addEventListener("click", handleClickOutside);
     }, [])
     // Switch dropdown status
     function toggleDropdown() {

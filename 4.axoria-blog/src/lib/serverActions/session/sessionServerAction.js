@@ -6,6 +6,7 @@ import { connectToDB } from "@/lib/utils/db/connectToDB";
 import slugify from "slugify";
 import bcrypt from 'bcryptjs';
 import { cookies } from "next/headers";
+import AppError from "@/lib/utils/errorHandling/customError";
 
 
 const modulename = "SECURITY # ";
@@ -18,29 +19,26 @@ export async function register(formData) {
     const emailregex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;        
 
     try {
-        if(userName < 3) {
-            // throw new Error("Pseudo too short, at least 3 characters");
-            return { success: false, message: 'User name too short, at least 3 characters' };
+        if(typeof userName !== "string" || (userName.trim().length < 3)) { 
+            throw new AppError("Pseudo too short, must have at least 3 characters");
         }
         const validEmail = emailregex.test(email);
-        if(!validEmail) {
-            // throw new Error("Invalid email");
-            return { success: false, message: 'Invalid email' };
+        if(typeof email !== "string" ||  !validEmail) {
+            throw new AppError("Invalid email");
         }
-        if(password < 6) {
-            // throw new Error("password must have at least 6 characters");
-            return { success: false, message: 'password must have at least 6 characters' };
+        if(typeof password !== "string" || password.trim().length < 6) {
+            throw new AppError("password must have at least 6 characters");
         }
         if(password !== confpassword) {
-            // throw new Error("password and confirm password must be the same");
-            return { success: false, message: 'password and confirm password must be the same' };
+            throw new AppError("password and confirm password must be the same");
         }
     
         connectToDB();
-        const user = await User.findOne({userName});
+        const user = await User.findOne({
+            $or: [{userName}, {email}]
+        });
         if(user) {
-            // throw new Error("User already exists, sory !");
-            return { success: false, message: 'User already exists' };
+            throw new AppError(user.userName === userName ? 'Username already used' : 'Email already used');
         }
         const normalizedUserName = slugify(userName, {lower:true,strict:true});
         const salt = await bcrypt.genSalt(10);
@@ -57,7 +55,11 @@ export async function register(formData) {
         return { success: true };
     }
     catch(error) {
-        throw new Error(error.message || 'An error occured while registering the user')
+        console.log(`Error while registering ${error}`);
+        if(error instanceof AppError) {
+            throw error;      // Send this application error to the caller
+        }
+        throw new Error('An error occured while registering'); // Send a generic message for any non App error
     }
 }
 // -----------------------------------------------------------------------------------------

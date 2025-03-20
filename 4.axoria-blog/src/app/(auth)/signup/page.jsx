@@ -25,30 +25,23 @@ export default function page() {
         submitButton.current.disabled = true;   // No multiple server request when one is running
         try {
             const result = await register(new FormData(e.target));            
-            if(result.success) {
-                submitButton.current.textContent = 'User saved ✅';
-                let countdown = 3;
+            submitButton.current.textContent = 'User saved ✅';
+            let countdown = 3;
+            serverInfo.current.textContent = `Redirecting ${countdown}...`;
+            const interval = setInterval(() => {
+                countdown -= 1;
                 serverInfo.current.textContent = `Redirecting ${countdown}...`;
-                const interval = setInterval(() => {
-                  countdown -= 1;
-                  serverInfo.current.textContent = `Redirecting ${countdown}...`;
-                  if(countdown === 0) {
-                    clearInterval(interval);
-                    router.push(`/signin`); // In case of success route to login page
-                  }
-                }, 1000);        
-            }
-            else {
-                serverInfo.current.textContent = result.message;
-                serverInfo.current.style.color = 'red';
-                submitButton.current.disabled = false;
-            }
+                if(countdown === 0) {
+                clearInterval(interval);
+                router.push(`/signin`); // In case of success route to login page
+                }
+            }, 1000);        
         }
         catch(error) {
             submitButton.current.textContent = 'Submit';
             submitButton.current.disabled = false;
             console.log(error);            
-            serverInfo.current.textContent = "An error occured";
+            serverInfo.current.textContent = error.message;
         }
     }
 

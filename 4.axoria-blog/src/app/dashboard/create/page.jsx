@@ -11,7 +11,10 @@ export default function () {
   const tagInputRef = useRef(null);
   const submitButtonRef = useRef(null);
   const serverValidationText = useRef(null);
+  const imgUploadStatus = useRef(null);
   const router = useRouter();
+  const imgMaxWidth = 1280;
+  const imgMaxHeight = 720;
 
   // -----------------------------------------------------------------------------------
   async function handleSubmit(e) {
@@ -65,15 +68,59 @@ export default function () {
     }
   }
 
+  function handleFileChange(e) {
+    const file = e.target.files[0]; // Mono file selector, so get the 1st one
+    const validImagesTypes = [ "image/jpeg", "image/png", "image/webp", "image/jpg"];
+    if(!validImagesTypes.includes(file.type)) {
+      imgUploadStatus.current.textContent = 'Supported images types are png, jpg, jpeg, webp';
+      e.target.value = "";  // Discard chosen image file
+      return;
+    }
+    else {
+      imgUploadStatus.current.textContent = ""; // reset in case a previuos error occured      
+    }
+    // Now check image max size
+    const img = new Image();
+    img.addEventListener("load", checkImageSize);
+    // ------------------------------------------------------------------------
+    function checkImageSize() {
+      if (img.width > imgMaxWidth || img.height > imgMaxHeight) {
+        e.target.value = "";
+        URL.revokeObjectURL(img.src); // Tell the browser to discard this file
+        imgUploadStatus.current.textContent = 'File too big';
+        return;
+      }
+      else {
+        imgUploadStatus.current.textContent = '';
+        URL.revokeObjectURL(img.src); // Tell the browser to discard this file
+      }
+    }
+    // ------------------------------------------------------------------------
+    img.src = URL.createObjectURL(file); // Now load the image
+  }
+
 
   return (
     <main className='u-main-container bg-white p-7 mt-32 mb-44'>
       <h1 className=' text-4xl mb-4'>Write an article ✏️</h1>
       <form action="" onSubmit={handleSubmit} className=' mb-6'>
-        <label htmlFor="title" className='f-label'>Title</label>
+        <label htmlFor="title" className='f-label'>Title</label>        
         <input type="text" name="title" className=" shadow border rounded w-full p-3 mb-7 text-gray-700
         focus:outline-slate-400" 
           id="title" required placeholder="Your article title"/>
+        { /* the article image */ }
+        <label htmlFor="coverImage" className="f-label">Cover image {imgMaxWidth} x {imgMaxHeight} or less</label>
+        <input 
+          name="coverImage"
+          className=" shadow cursor-pointer border rounded w-full p-3
+           text-gray-700 mb-2 focus:outline-none focus:shadow-outline"
+          type="file" 
+          id="coverImage" 
+          required
+          placeholder="Upload your article image"
+          onChange={handleFileChange}
+        />
+        <p className=" mb-7 text-red-700" ref={imgUploadStatus}></p>
         {/* Tags */}
         <div className=" mb-10">
           <label htmlFor="tag" className="f-label">Add a tag(s) (optional, max 5)</label>

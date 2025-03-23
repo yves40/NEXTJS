@@ -5,7 +5,7 @@ function Footer() {
   return (
     <footer className=" text-center bg-white p-4 border-t border-t-zinc-300">
       <Link href="#">
-        Axoria &copy; : Mar 20 2025 : 1.12
+        Axoria &copy; : Mar 23 2025 : 1.13
       </Link>
     </footer>
   )

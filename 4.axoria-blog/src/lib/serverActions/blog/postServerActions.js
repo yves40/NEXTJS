@@ -13,32 +13,72 @@ import "prismjs/components/prism-css"
 import "prismjs/components/prism-javascript"
 import AppError from "@/lib/utils/errorHandling/customError";
 import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
+import sharp from "sharp";
+import crypto from "crypto";
+import { writeFile } from "fs/promises";
+import path from "path";
 
 // This code is used to cleanup HTML from potential XSS attacks
 // As it is executed on the server side, the first step is to create a DOM onto which 
 // cleaning will take place.
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
+const imgMaxWidth = 1280;
+const imgMaxHeight = 720;
 
 export async function addPost(formData) { 
 
   const modulename = "***** SERVERACTIONS # ";
-  const { title, markdownArticle, tags} = Object.fromEntries(formData);
+  const { title, markdownArticle, tags, imageFile} = Object.fromEntries(formData);
+  const uploadPath = path.join(process.cwd(), "public/blogimages/");
 
   try {
 
     // Some back end controls !!!
-    if(typeof title !== 'string' || title.trim.length() < 3) {
-      throw new AppError('Invalid data');
+    
+    if(typeof title !== 'string' || title.trim().length < 3) {
+      throw new AppError('Provide a title please');
     }
-    if(typeof markdownArticle !== 'string' || markdownArticle.trim.length() === 0) {
-      throw new AppError('Invalid data');
+    if(typeof markdownArticle !== 'string' || markdownArticle.trim().length === 0) {
+      throw new AppError('Markdown is not optional');
     }
     await connectToDB();
     const session = await sessionInfo();
     if(!session.success) {
-      throw new AppError('Authenitcation required');
+      throw new AppError('Authentication required');
     }
+    // Manage image upload
+    // 1st check image characteristics if transmitted    
+    let uniqueFilename = '';
+    console.log(`${modulename} ************** ${Object.values(imageFile)}`);
+    console.log(`${modulename} ************** ${Object.values(imageFile).length ? 'Image here' : 'No image sent'}`);
+    if(Object.values(imageFile).length !== 0) {
+      if(!(imageFile instanceof File)) {
+        throw new AppError('Invalid image data');
+      }
+      const validImagesTypes = [ "image/jpeg", "image/png", "image/webp", "image/jpg"];
+      if(!validImagesTypes.includes(imageFile.type)) {
+        throw new AppError('Supported images types are png, jpg, jpeg, webp');
+      }
+      const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+      const { width, height } = await sharp(imageBuffer).metadata();
+      if(width > imgMaxWidth || height > imgMaxHeight) {
+        throw new AppError('Invalid image data')
+      }
+      uniqueFilename = `${crypto.randomUUID()}_${imageFile.name}`;  // Build a unique file name      
+      // And for webp lib, check here : https://www.npmjs.com/package/webp-converter
+      // Check https://stackoverflow.com/questions/72663673/how-do-i-get-uploaded-image-in-next-js-and-save-it
+      try {
+        await writeFile(path.join( uploadPath + uniqueFilename, imageBuffer));
+      } catch (error) {
+        throw new AppError(`Unable to write the image file !!!`);
+      }      
+    }
+    else {  // No image file
+      uniqueFilename = '';
+    }
+     
+    // Manage TAGS
     if(typeof tags !== 'string') {
       throw new AppError('Invalid data');
     }
@@ -84,7 +124,8 @@ export async function addPost(formData) {
       title, 
       markdownArticle,
       markdownHTMLResult,
-      tags: tagIds
+      tags: tagIds,
+      imageFile: uniqueFilename
     })
     const savedPost = await newPost.save();    
     console.log(`***************** Object saved ${JSON.stringify(newPost)}`);

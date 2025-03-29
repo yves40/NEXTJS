@@ -9,6 +9,10 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  imageFile: {
+    type: String,
+    required: false
+  },
   markdownArticle: {
     type: String,
     required: true

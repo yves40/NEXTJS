@@ -19,7 +19,7 @@ export default function () {
   // -----------------------------------------------------------------------------------
   async function handleSubmit(e) {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.target);    
     formData.set("tags", JSON.stringify(tags))  // To handle post creation without any tag !
                                                 // post model now contains a tags array property
     serverValidationText.current.textContent = ""; // Reset message
@@ -77,7 +77,7 @@ export default function () {
       return;
     }
     else {
-      imgUploadStatus.current.textContent = ""; // reset in case a previuos error occured      
+      imgUploadStatus.current.textContent = ""; // reset in case a previous error occured      
     }
     // Now check image max size
     const img = new Image();
@@ -87,7 +87,7 @@ export default function () {
       if (img.width > imgMaxWidth || img.height > imgMaxHeight) {
         e.target.value = "";
         URL.revokeObjectURL(img.src); // Tell the browser to discard this file
-        imgUploadStatus.current.textContent = 'File too big';
+        imgUploadStatus.current.textContent = `Image too big, image size : ${img.width} / ${img.height}`;
         return;
       }
       else {
@@ -103,20 +103,19 @@ export default function () {
   return (
     <main className='u-main-container bg-white p-7 mt-32 mb-44'>
       <h1 className=' text-4xl mb-4'>Write an article ✏️</h1>
-      <form action="" onSubmit={handleSubmit} className=' mb-6'>
+      <form enctype="multipart/form-data" onSubmit={handleSubmit} className=' pb-6'>
         <label htmlFor="title" className='f-label'>Title</label>        
         <input type="text" name="title" className=" shadow border rounded w-full p-3 mb-7 text-gray-700
         focus:outline-slate-400" 
           id="title" required placeholder="Your article title"/>
         { /* the article image */ }
-        <label htmlFor="coverImage" className="f-label">Cover image {imgMaxWidth} x {imgMaxHeight} or less</label>
+        <label htmlFor="imageFile" className="f-label">Cover image {imgMaxWidth} x {imgMaxHeight} or less</label>
         <input 
-          name="coverImage"
+          name="imageFile"
           className=" shadow cursor-pointer border rounded w-full p-3
            text-gray-700 mb-2 focus:outline-none focus:shadow-outline"
           type="file" 
-          id="coverImage" 
-          required
+          id="imageFile" 
           placeholder="Upload your article image"
           onChange={handleFileChange}
         />

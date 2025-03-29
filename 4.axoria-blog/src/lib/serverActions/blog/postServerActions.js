@@ -50,7 +50,6 @@ export async function addPost(formData) {
     // Manage image upload
     // 1st check image characteristics if transmitted    
     let uniqueFilename = '';
-    console.log(`${modulename} ************** ${Object.values(imageFile)}`);
     console.log(`${modulename} ************** ${Object.values(imageFile).length ? 'Image here' : 'No image sent'}`);
     if(Object.values(imageFile).length !== 0) {
       if(!(imageFile instanceof File)) {

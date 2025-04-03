@@ -33,9 +33,6 @@ export async function addPost(formData) {
   const { title, markdownArticle, tags, imageFile} = Object.fromEntries(formData);
   const uploadPath = path.join(process.cwd(), "/public/blogimages/");
 
-  // D E B U G //
-  console.log(imageFile);
-
   try {
     
     // Some back end controls !!!
@@ -48,6 +45,8 @@ export async function addPost(formData) {
     }
     await connectToDB();
     const session = await sessionInfo();
+    console.log(session);
+    
     if(!session.success) {
       throw new AppError('Authentication required');
     }
@@ -127,7 +126,7 @@ export async function addPost(formData) {
       markdownHTMLResult,
       tags: tagIds,
       imageFile: uniqueFilename,
-      author: 'Fake'
+      author: session.userName
     })
     const savedPost = await newPost.save();    
     console.log(`${DEBUGTAG} Object saved ${JSON.stringify(newPost)}`);

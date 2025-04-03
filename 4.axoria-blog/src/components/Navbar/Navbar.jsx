@@ -20,6 +20,7 @@ export default async function Navbar() {
           { sessionStatus.success ? (
             <>
               <Link href="/dashboard/create" className=" mx-2 text-zinc-900">Add an article</Link>
+              <h2 className=" mx-2 text-blue-800">{sessionStatus.userName}</h2>
               <NavbarDropdown></NavbarDropdown>
             </>
           ) : ( 

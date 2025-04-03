@@ -13,6 +13,10 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  author: {
+    type: String,
+    required: true
+  },
   markdownArticle: {
     type: String,
     required: true

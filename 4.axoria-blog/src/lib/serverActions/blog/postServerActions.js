@@ -71,20 +71,14 @@ export async function addPost(formData) {
       // And for webp lib, check here : https://www.npmjs.com/package/webp-converter
       // Check https://stackoverflow.com/questions/72663673/how-do-i-get-uploaded-image-in-next-js-and-save-it
       try {
-        // D E B U G //
-        console.log(`${DEBUGTAG} ${uploadPath + uniqueFilename}` );
         const thepath = path.join( uploadPath, uniqueFilename);
         await writeFile(thepath, imageBuffer);
       }
       catch(error) {
-        throw new AppError(error.message);
-        // throw new AppError(`Unable to write the image file !!!`);
+        console.log(error.message);
+        throw new AppError(`Unable to write the image file !!!`);
       }      
-    }
-    else {  // No image file
-      uniqueFilename = '';
-    }
-     
+    }     
     // Manage TAGS
     if(typeof tags !== 'string') {
       throw new AppError('Invalid data');
@@ -132,10 +126,11 @@ export async function addPost(formData) {
       markdownArticle,
       markdownHTMLResult,
       tags: tagIds,
-      imageFile: uniqueFilename
+      imageFile: uniqueFilename,
+      author: 'Fake'
     })
     const savedPost = await newPost.save();    
-    console.log(`***************** Object saved ${JSON.stringify(newPost)}`);
+    console.log(`${DEBUGTAG} Object saved ${JSON.stringify(newPost)}`);
     return { success: true, slug: newPost.slug }
   }
   catch(error) {

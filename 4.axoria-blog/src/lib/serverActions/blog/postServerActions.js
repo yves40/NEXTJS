@@ -27,13 +27,17 @@ const imgMaxWidth = 1280;
 const imgMaxHeight = 720;
 
 export async function addPost(formData) { 
-
+  
   const modulename = "***** SERVERACTIONS # ";
+  const DEBUGTAG = "***** DEBUG #";
   const { title, markdownArticle, tags, imageFile} = Object.fromEntries(formData);
-  const uploadPath = path.join(process.cwd(), "public/blogimages/");
+  const uploadPath = path.join(process.cwd(), "/public/blogimages/");
+
+  // D E B U G //
+  console.log(imageFile);
 
   try {
-
+    
     // Some back end controls !!!
     
     if(typeof title !== 'string' || title.trim().length < 3) {
@@ -50,8 +54,7 @@ export async function addPost(formData) {
     // Manage image upload
     // 1st check image characteristics if transmitted    
     let uniqueFilename = '';
-    console.log(`${modulename} ************** ${Object.values(imageFile).length ? 'Image here' : 'No image sent'}`);
-    if(Object.values(imageFile).length !== 0) {
+    if(Object.values(imageFile).size !== 0) {
       if(!(imageFile instanceof File)) {
         throw new AppError('Invalid image data');
       }
@@ -62,15 +65,20 @@ export async function addPost(formData) {
       const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
       const { width, height } = await sharp(imageBuffer).metadata();
       if(width > imgMaxWidth || height > imgMaxHeight) {
-        throw new AppError('Invalid image data')
+        throw new AppError('Invalid image size')
       }
       uniqueFilename = `${crypto.randomUUID()}_${imageFile.name}`;  // Build a unique file name      
       // And for webp lib, check here : https://www.npmjs.com/package/webp-converter
       // Check https://stackoverflow.com/questions/72663673/how-do-i-get-uploaded-image-in-next-js-and-save-it
       try {
-        await writeFile(path.join( uploadPath + uniqueFilename, imageBuffer));
-      } catch (error) {
-        throw new AppError(`Unable to write the image file !!!`);
+        // D E B U G //
+        console.log(`${DEBUGTAG} ${uploadPath + uniqueFilename}` );
+        const thepath = path.join( uploadPath, uniqueFilename);
+        await writeFile(thepath, imageBuffer);
+      }
+      catch(error) {
+        throw new AppError(error.message);
+        // throw new AppError(`Unable to write the image file !!!`);
       }      
     }
     else {  // No image file

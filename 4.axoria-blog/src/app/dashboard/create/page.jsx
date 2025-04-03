@@ -22,9 +22,11 @@ export default function () {
     const formData = new FormData(e.target);    
     formData.set("tags", JSON.stringify(tags))  // To handle post creation without any tag !
                                                 // post model now contains a tags array property
+    // Some UI reset
     serverValidationText.current.textContent = ""; // Reset message
     submitButtonRef.current.textContent = 'Saving post ...';
     submitButtonRef.current.disabled = true;  // Post sent, button is inactive
+
     try {
       const result = await addPost(formData);
       if(result.success) {
@@ -103,7 +105,7 @@ export default function () {
   return (
     <main className='u-main-container bg-white p-7 mt-32 mb-44'>
       <h1 className=' text-4xl mb-4'>Write an article ✏️</h1>
-      <form enctype="multipart/form-data" onSubmit={handleSubmit} className=' pb-6'>
+      <form encType="multipart/form-data" onSubmit={handleSubmit} className=' pb-6'>
         <label htmlFor="title" className='f-label'>Title</label>        
         <input type="text" name="title" className=" shadow border rounded w-full p-3 mb-7 text-gray-700
         focus:outline-slate-400" 

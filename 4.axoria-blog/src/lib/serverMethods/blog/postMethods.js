@@ -1,5 +1,6 @@
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import { Post } from "@/lib/models/post";
+import { Tag } from "@/lib/models/tag";
 import { notFound } from "next/navigation";
 
 const modulename = "POST #";
@@ -9,10 +10,15 @@ export async function getPost(slug) {
         const post = await Post.findOne({slug});
         if(!post) return notFound();
 
-        return post.populate({
-            path: "tags",
-            select: "name slug"
-        });
+        return await Post.findOne({slug})
+                .populate({
+                                path: "tags",
+                                select: "name slug"
+                        })
+                .populate({
+                        path: "author",
+                        select: "userName normalizedUserName"
+                });
 }
 export async function getPosts() {
         await connectToDB();

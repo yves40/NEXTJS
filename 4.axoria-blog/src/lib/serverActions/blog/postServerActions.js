@@ -126,7 +126,7 @@ export async function addPost(formData) {
       markdownHTMLResult,
       tags: tagIds,
       imageFile: uniqueFilename,
-      author: session.userName
+      author: session.userId
     })
     const savedPost = await newPost.save();    
     console.log(`${DEBUGTAG} Object saved ${JSON.stringify(newPost)}`);

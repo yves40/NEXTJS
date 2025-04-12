@@ -15,7 +15,7 @@ export default async function page({params}) {
     <div>
         <main className="u-main-container u-padding-content-container">
             <h1 className=" text-4xl mb-3">{post.title}</h1>
-            <h2 className=" mx-2  mb-2 font-semibold italic text-2xl">By..., {post.author}</h2>
+            <h2 className=" mx-2  mb-2 font-semibold italic text-2xl">By..., {post.author.userName}</h2>
             <Image src={imagePath} alt="The speed"
                 width={500}
                 height={250}

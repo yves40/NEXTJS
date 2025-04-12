@@ -34,7 +34,7 @@ export default async function Home() {
                     </time>
                     <Link href={`/categories/author/${fakeauthor}`} className=" ml-auto text-base text-gray-70
                       hover:text-gray-600 whitespace-nowrap truncate">
-                      {post.author}
+                      {post.author.userName}
                     </Link>
                   </div>
                   <Link href={`/article/${post.slug}`} className=" inline-block mt-6 font-semibold text-zinc-800

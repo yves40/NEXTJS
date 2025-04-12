@@ -33,6 +33,9 @@ export async function sessionInfo() {
     }
     else {
         console.log(`${modulename} user OK`);      
-        return { success: true, userId: user._id.toString(), userName: user.normalizedUserName };
+        return { success: true, userId: user._id.toString(), 
+            userName: user.UserName,
+            NormalizedUserName: user.normalizedUserName
+         };
     }
 }

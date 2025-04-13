@@ -32,7 +32,7 @@ export default async function Home() {
                         minute: "2-digit"
                       })}
                     </time>
-                    <Link href={`/categories/author/${fakeauthor}`} className=" ml-auto text-base text-gray-70
+                    <Link href={`/categories/author/${post.author.normalizedUserName}`} className=" ml-auto text-base text-gray-70
                       hover:text-gray-600 whitespace-nowrap truncate">
                       {post.author.userName}
                     </Link>

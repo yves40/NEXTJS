@@ -22,9 +22,9 @@ import path from "path";
 // As it is executed on the server side, the first step is to create a DOM onto which 
 // cleaning will take place.
 const window = new JSDOM("").window;
-const DOMPurify = createDOMPurify(window);
-const imgMaxWidth = 1280;
-const imgMaxHeight = 720;
+const DOMPurify = createDOMPurify(window);  
+const imgMaxWidth = 4200;
+const imgMaxHeight = 2100;
 const imgMinWidth = 128;
 const imgMinHeight = 128;
 

@@ -13,8 +13,8 @@ export default function () {
   const serverValidationText = useRef(null);
   const imgUploadStatus = useRef(null);
   const router = useRouter();
-  const imgMaxWidth = 1280;
-  const imgMaxHeight = 720;
+  const imgMaxWidth = 4200;
+  const imgMaxHeight = 2100;
   const imgMinWidth = 128;
   const imgMinHeight = 128;
 

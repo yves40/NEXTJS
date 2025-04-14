@@ -52,11 +52,15 @@ export async function addPost(formData) {
     }
     // Manage image upload
     // 1st check image characteristics if transmitted    
-    let uniqueFilename = '';
-    if(Object.values(imageFile).size !== 0) {
-      if(!(imageFile instanceof File)) {
-        throw new AppError('Invalid image data');
-      }
+    let uniqueFilename = '';    
+    
+    if(!(imageFile instanceof File)) {
+      throw new AppError('Invalid image data');
+    }
+
+    console.log(`${modulename} the file candidate for upload: ${imageFile.name} / ${imageFile.name.length}`);
+    
+    if(imageFile.name !== 'undefined') {    // Any file chosen ? 
       const validImagesTypes = [ "image/jpeg", "image/png", "image/webp", "image/jpg"];
       if(!validImagesTypes.includes(imageFile.type)) {
         throw new AppError('Supported images types are png, jpg, jpeg, webp');
@@ -77,7 +81,7 @@ export async function addPost(formData) {
         console.log(error.message);
         throw new AppError(`Unable to write the image file !!!`);
       }      
-    }     
+    }
     // Manage TAGS
     if(typeof tags !== 'string') {
       throw new AppError('Invalid data');

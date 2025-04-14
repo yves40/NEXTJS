@@ -15,6 +15,8 @@ export default function () {
   const router = useRouter();
   const imgMaxWidth = 1280;
   const imgMaxHeight = 720;
+  const imgMinWidth = 128;
+  const imgMinHeight = 128;
 
   // -----------------------------------------------------------------------------------
   async function handleSubmit(e) {
@@ -89,13 +91,17 @@ export default function () {
       if (img.width > imgMaxWidth || img.height > imgMaxHeight) {
         e.target.value = "";
         URL.revokeObjectURL(img.src); // Tell the browser to discard this file
-        imgUploadStatus.current.textContent = `Image too big, image size : ${img.width} / ${img.height}`;
+        imgUploadStatus.current.textContent = `Image too big : ${img.width} / ${img.height}`;
         return;
       }
-      else {
-        imgUploadStatus.current.textContent = '';
+      if (img.width < imgMinWidth || img.height < imgMinHeight) {
+        e.target.value = "";
         URL.revokeObjectURL(img.src); // Tell the browser to discard this file
+        imgUploadStatus.current.textContent = `Image too small : ${img.width} / ${img.height}`;
+        return;
       }
+      imgUploadStatus.current.textContent = '';
+      URL.revokeObjectURL(img.src); // Tell the browser to discard this file
     }
     // ------------------------------------------------------------------------
     img.src = URL.createObjectURL(file); // Now load the image
@@ -111,7 +117,7 @@ export default function () {
         focus:outline-slate-400" 
           id="title" required placeholder="Your article title"/>
         { /* the article image */ }
-        <label htmlFor="imageFile" className="f-label">Cover image {imgMaxWidth} x {imgMaxHeight} or less</label>
+        <label htmlFor="imageFile" className="f-label">Cover image {imgMaxWidth} x {imgMaxHeight} Max : {imgMinWidth} x {imgMinHeight} Max</label>
         <input 
           name="imageFile"
           className=" shadow cursor-pointer border rounded w-full p-3

@@ -25,6 +25,8 @@ const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 const imgMaxWidth = 1280;
 const imgMaxHeight = 720;
+const imgMinWidth = 128;
+const imgMinHeight = 128;
 
 export async function addPost(formData) { 
   
@@ -68,7 +70,10 @@ export async function addPost(formData) {
       const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
       const { width, height } = await sharp(imageBuffer).metadata();
       if(width > imgMaxWidth || height > imgMaxHeight) {
-        throw new AppError('Invalid image size')
+        throw new AppError('Image too big');
+      }
+      if(width < imgMinWidth || height < imgMinHeight) {
+        throw new AppError('Image too small');
       }
       uniqueFilename = `${crypto.randomUUID()}_${imageFile.name}`;  // Build a unique file name      
       // And for webp lib, check here : https://www.npmjs.com/package/webp-converter

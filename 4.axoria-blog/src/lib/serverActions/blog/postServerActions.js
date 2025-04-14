@@ -24,7 +24,7 @@ import path from "path";
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);  
 const imgMaxWidth = 4200;
-const imgMaxHeight = 2100;
+const imgMaxHeight = 2800;
 const imgMinWidth = 128;
 const imgMinHeight = 128;
 

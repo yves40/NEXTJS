@@ -18,16 +18,18 @@ export default async function page({params}) {
     <div>
         <main className="u-main-container u-padding-content-container">
             <h1 className=" text-4xl mb-3">{post.title}</h1>
-            <h2 className=" mx-2  mb-2 font-semibold italic text-2xl">By..., {post.author.userName}</h2>
+            <Link href={`/categories/author/${post.author.normalizedUserName}`} className="text-2xl italic">
+                By, {post.author.userName}
+            </Link>
             { (imagePath !== '') &&  
-                    <Image src={imagePath} alt="The speed"
-                        width={500}
-                        height={250}
-                        className=" border-none rounded-2xl  object-cover"/>
+                    <Image src={imagePath} alt="Article image"
+                        width={1280}
+                        height={720}
+                        className="border-none rounded-2xl  my-2"/>
             }
             <p className=" mb-6">
                 {post.tags.map( tag => (
-                    <Link key={tag.slug} className=" mr-4 underline" href={`categories/tag/${tag.slug}`}>#{tag.name}</Link>
+                    <Link key={tag.slug} className=" mr-4 underline" href={`/categories/tag/${tag.slug}`}>#{tag.name}</Link>
                 )) }
             </p>
             {/* <p>{post.markdownArticle}</p> */}

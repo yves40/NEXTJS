@@ -12,9 +12,9 @@ export async function getPost(slug) {
 
         return await Post.findOne({slug})
                 .populate({
-                                path: "tags",
-                                select: "name slug"
-                        })
+                        path: "tags",
+                        select: "name slug"
+                })
                 .populate({
                         path: "author",
                         select: "userName normalizedUserName"

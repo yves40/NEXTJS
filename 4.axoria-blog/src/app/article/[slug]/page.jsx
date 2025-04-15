@@ -25,7 +25,7 @@ export default async function page({params}) {
                     <Image src={imagePath} alt="Article image"
                         width={1280}
                         height={720}
-                        className="border-none rounded-2xl  my-2"/>
+                        className="border-none rounded-2xl  my-4"/>
             }
             <p className=" mb-6">
                 {post.tags.map( tag => (

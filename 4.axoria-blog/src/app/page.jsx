@@ -1,13 +1,12 @@
 import Link from "next/link"
 import { getPosts } from "@/lib/serverMethods/blog/postMethods";
 import { connectToDB } from "@/lib/utils/db/connectToDB";
-
+import BlogCard from "@/components/BlogCard";
 
 export default async function Home() {
 
   connectToDB();
   const posts = await getPosts(); // Display current posts
-  const fakeauthor = 'John Doe';
 
   return (
     // u-main-container is defined in globals.css 
@@ -20,28 +19,7 @@ export default async function Home() {
       <ul className="u-articles-grid">
           {
             posts.map( (post, id) => (
-              <li key={id} className=" rounded-sm shadow-md hover:shadow-xl border hover:border-zinc-300">
-                <div className=" pt-5 px-5 pb-7">
-                  <div className="flex items-baseline gap-x-4 text-xs">
-                    <time dateTime={post.createdAt} className=" text-gray-500 text-sm">
-                      {new Date(post.createdAt).toLocaleDateString("en-EN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit"
-                      })}
-                    </time>
-                    <Link href={`/categories/author/${post.author.normalizedUserName}`} className=" ml-auto text-base text-gray-70
-                      hover:text-gray-600 whitespace-nowrap truncate">
-                      {post.author.userName}
-                    </Link>
-                  </div>
-                  <Link href={`/article/${post.slug}`} className=" inline-block mt-6 font-semibold text-zinc-800
-                    hover:text-zinc-600">{post.title}</Link>
-                  {/* <p className="">{post.markdownArticle}</p> */}
-                </div>
-              </li>
+              <BlogCard post={post} key={id}></BlogCard>
             ))
           }
       </ul>

@@ -39,3 +39,8 @@ export async function sessionInfo() {
          };
     }
 }
+export async function getUserInfo(id) {
+    await connectToDB();
+    const theuser = await User.findOne({_id: id});
+    return theuser;
+}

@@ -1,13 +1,19 @@
-import Image from "next/image";
+import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
+import Image from "next/image"; 
 import Link from "next/link";
+import { getUserInfo } from "@/lib/serverMethods/session/sessionMethods";
 
-export default function BlogCard({post, id}) {
+export default async function BlogCard({post, id}) {
   
   const fakeauthor = 'John Doe';  
   let imagePath = '';
   if(post.imageFile.length !== 0 ) {  // Possibly no image
       imagePath = `/blogimages/${post.imageFile}`;
   }
+  console.log(post);
+  const userData = await getUserInfo(post.author);
+  console.log(userData);
+  
 
   return (
     <li key={id} className=" rounded-sm shadow-md hover:shadow-xl border hover:border-zinc-300">
@@ -30,9 +36,9 @@ export default function BlogCard({post, id}) {
               minute: "2-digit"
             })}
           </time> 
-          <Link href={`/categories/author/${fakeauthor}`} className=" ml-auto text-base text-gray-70
+          <Link href={`/categories/author/${userData.userName}`} className=" ml-auto text-base text-gray-70
             hover:text-gray-600 whitespace-nowrap truncate">
-            {fakeauthor}
+            {userData.userName}
           </Link>
         </div>
         <Link href={`/article/${post.slug}`} className=" inline-block mt-6 font-semibold text-zinc-800

@@ -18,11 +18,8 @@ export async function sessionInfo() {
     }
     await connectToDB();
     // Check the user session in the DB
-    console.log(`${modulename} Search user with ID ${userCookieId} in DB `);      
     const session = await Session.findOne({ userId: userCookieId });
-    console.log(`${modulename} ${session ? session.userId : 'No user session in DB'}`);          
     if(!session || session.expiresAt < new Date()) { // Inexistent or expired session ?
-        console.log(`${modulename} user KO : DB sessionCookie`);      
         return { success: false };
     }
     // Check the user tied to this session
@@ -32,7 +29,6 @@ export async function sessionInfo() {
         return { success: false };
     }
     else {
-        console.log(`${modulename} user OK`);      
         return { success: true, userId: user._id.toString(), 
             userName: user.userName,
             NormalizedUserName: user.normalizedUserName

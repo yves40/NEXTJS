@@ -10,11 +10,9 @@ export default async function BlogCard({post, id}) {
   if(post.imageFile.length !== 0 ) {  // Possibly no image
       imagePath = `/blogimages/${post.imageFile}`;
   }
-  console.log(post);
-  const userData = await getUserInfo(post.author);
-  console.log(userData);
-  
 
+  const userData = await getUserInfo(post.author);
+  
   return (
     <li key={id} className=" rounded-sm shadow-md hover:shadow-xl border hover:border-zinc-300">
             { (imagePath !== '') &&  

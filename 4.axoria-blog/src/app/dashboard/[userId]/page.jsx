@@ -1,6 +1,6 @@
-import { getPosts } from "@/lib/serverMethods/blog/postMethods";
 import { getUserPost } from "@/lib/serverMethods/blog/postMethods";
 import Link from "next/link"
+import DeletePostButton from "./components/DeletePostButton";
 
 export default async function Dashboard({params}) {
 
@@ -8,7 +8,6 @@ export default async function Dashboard({params}) {
   const {userId} = await params;
 
   console.log(`${modulename} Dashboard for user : ${userId}`);
-  const allPosts = await getPosts();
   const userPosts = await getUserPost(userId);
 
   return (
@@ -20,10 +19,11 @@ export default async function Dashboard({params}) {
               <Link className=" mr-auto underline underline-offset-2 text-violet-600" rel="stylesheet" href={`/article/${post.slug}`}>
                 {post.title}
               </Link>
-              <button>Delete</button>
-              <Link href={`/dashboard/edit/${post.slug}`} className=" bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded mr-2">
+              <Link href={`/dashboard/edit/${post.slug}`} className=" bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded mr-2 
+                          text-center min-w-24">
                 Edit
               </Link>
+              <DeletePostButton id={post._id.toString()}/>
             </li>
           ))
         }

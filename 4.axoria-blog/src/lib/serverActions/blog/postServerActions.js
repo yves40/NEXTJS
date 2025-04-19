@@ -15,7 +15,7 @@ import AppError from "@/lib/utils/errorHandling/customError";
 import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
 import sharp from "sharp";
 import crypto from "crypto";
-import { writeFile } from "fs/promises";
+import { writeFile, unlink } from "fs/promises";
 import path from "path";
 
 // This code is used to cleanup HTML from potential XSS attacks
@@ -28,10 +28,11 @@ const imgMaxHeight = 2800;
 const imgMinWidth = 128;
 const imgMinHeight = 128;
 
+const modulename = "***** SERVERACTIONS # ";
+const DEBUGTAG = "***** DEBUG #";
+
 export async function addPost(formData) { 
   
-  const modulename = "***** SERVERACTIONS # ";
-  const DEBUGTAG = "***** DEBUG #";
   const { title, markdownArticle, tags, imageFile} = Object.fromEntries(formData);
   const uploadPath = path.join(process.cwd(), "/public/blogimages/");
 
@@ -147,5 +148,41 @@ export async function addPost(formData) {
       throw error;      // Send this application error to the caller
     }
     throw new Error('An error occured while creating the post'); // Send a generic message for any non App error
+  }
+}
+
+export async function deletePost(id) {
+
+  const uploadPath = path.join(process.cwd(), "/public/blogimages/");
+
+  console.log(`${modulename} deleting post with ID : ${id}`);
+
+  try {
+    await connectToDB();
+    const user = await sessionInfo();
+    if(!user) {
+      throw new AppError('Authentication required');
+    }
+    const post = await Post.findById(id);
+    if(!post) {
+      throw new AppError(`Unable to delete post with ID : ${id} : NOT FOUND`);
+    }
+    await Post.findByIdAndDelete(id);
+    // Don't forget to delete associated image if any
+    if(post.imageFile.length !== 0) {
+      const thepath = path.join( uploadPath, post.imageFile);
+      await unlink(thepath, (error) => {
+        throw new AppError(`Unable to delete the local image file !!!`);  
+      });
+      console.log(`${modulename} deleted associated file : ${post.imageFile}`);
+    }
+    return { success: true }
+  }
+  catch(error) {
+    console.log(`Error while deleting the post ${error}`);
+    if(error instanceof AppError) {
+      throw error;      // Send this application error to the caller
+    }
+    throw new Error('An error occured while deleting the post'); // Send a generic message for any non App error
   }
 }

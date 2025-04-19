@@ -8,8 +8,6 @@ const modulename = 'UIX # ';
 export default async function Navbar() {
 
   const sessionStatus = await sessionInfo();
-  console.log(`${modulename} ${JSON.stringify(sessionStatus)}`);
-  
 
   return (
     // u-main-container is defined in globals.css 
@@ -21,7 +19,7 @@ export default async function Navbar() {
             <>
               <Link href="/dashboard/create" className=" mx-2 text-zinc-900">Add an article</Link>
               <h2 className=" mx-2 text-blue-800">{sessionStatus.userName}</h2>
-              <NavbarDropdown></NavbarDropdown>
+              <NavbarDropdown userId={sessionStatus.userId}></NavbarDropdown>
             </>
           ) : ( 
             <>

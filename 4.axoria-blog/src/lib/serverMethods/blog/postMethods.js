@@ -26,3 +26,9 @@ export async function getPosts() {
         return posts;    
 }
 
+export async function getUserPost(userId) {
+        await connectToDB();
+        const posts = await Post.find({author: userId}).select("title _id slug");
+        return posts;    
+}
+

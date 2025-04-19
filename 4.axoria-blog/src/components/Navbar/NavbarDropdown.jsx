@@ -8,8 +8,8 @@ import { logout, isPrivatePage } from "@/lib/serverActions/session/sessionServer
 
 const modulename = "UIX # ";
 
-export default function NavbarDropdown() {
-
+export default function NavbarDropdown({userId}) {
+    
     const [isOpen, setIsOpen ] = useState(false);
     const dropDownRef = useRef();
     const router = useRouter();
@@ -54,7 +54,7 @@ export default function NavbarDropdown() {
             { isOpen && (
                 <ul className=" absolute right-0 top-10 w-[250px] border-b border-x border-zinc-300">
                     <li className=" bg-slate-50 hover:bg-slate-200 border-b border-slate-300" >
-                        <Link href='/dashboard' className="block p-2" onClick={closeDropDown}>Dashboard</Link>
+                        <Link href={`/dashboard/${userId}`} className="block p-2" onClick={closeDropDown}>Dashboard</Link>
                     </li>
                     <li className=" bg-slate-50 hover:bg-slate-200">
                         <button className=" w-full p-2 text-left" onClick={handleLogout}>Sign out</button>

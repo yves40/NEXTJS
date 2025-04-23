@@ -1,6 +1,7 @@
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import { Post } from "@/lib/models/post";
 import { Tag } from "@/lib/models/tag";
+import { User } from "@/lib/models/user";
 import { notFound } from "next/navigation";
 
 const modulename = "POST #";
@@ -33,8 +34,6 @@ export async function getUserPost(userId) {
 }
 export async function getPostsByTag(tag) {
         await connectToDB();
-        console.log(`************* ${tag}`);
-        
         const thetag = await Tag.findOne({slug: tag});
         if(!thetag) {      // Got a problem here
                 notFound();
@@ -49,3 +48,19 @@ export async function getPostsByTag(tag) {
         return posts;
 }
 
+
+export async function getPostsByAuthor(normalizedUserName) {
+        await connectToDB();
+        const author = await User.findOne({normalizedUserName});
+        if(!author) {      // Got a problem here
+                notFound();
+        }
+        const posts = await Post.find({ author: author._id})
+        .populate({
+                path: "author",
+                select: "userName normalizedUserName"
+        })
+        .select("title imageFile slug createdAt")
+        .sort({createdAt: -1});
+        return {author, posts};
+}

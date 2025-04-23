@@ -31,4 +31,21 @@ export async function getUserPost(userId) {
         const posts = await Post.find({author: userId}).select("title _id slug");
         return posts;    
 }
+export async function getPostsByTag(tag) {
+        await connectToDB();
+        console.log(`************* ${tag}`);
+        
+        const thetag = await Tag.findOne({slug: tag});
+        if(!thetag) {      // Got a problem here
+                notFound();
+        }
+        const posts = await Post.find({ tags: thetag._id})
+        .populate({
+                path: "author",
+                select: "userName"
+        })
+        .select("title imageFile slug createdAt")
+        .sort({createdAt: -1});
+        return posts;
+}
 

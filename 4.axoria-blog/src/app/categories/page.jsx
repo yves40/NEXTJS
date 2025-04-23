@@ -3,9 +3,7 @@ import Link from "next/link";
 
 export default async function page() {
 
-  const tags = await getTags();
-  console.log(tags);
-  
+  const tags = await getTags();  
   return (
     <div className="u-main-container u-padding-content-container">
       <h1 className="t-main-title">Categories</h1>

@@ -22,10 +22,7 @@ export default async function page({params}) {
                 By, {post.author.userName}
             </Link>
             { (imagePath !== '') &&  
-                    <Image src={imagePath} alt="Article image"
-                        width={1280}
-                        height={720}
-                        className="border-none rounded-2xl  my-4"/>
+                <img src={imagePath} alt="Article image" className="tw-yves-img"/>
             }
             <p className=" mb-6">
                 {post.tags.map( tag => (

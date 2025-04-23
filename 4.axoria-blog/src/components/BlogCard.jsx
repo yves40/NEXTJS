@@ -17,10 +17,11 @@ export default async function BlogCard({post, id}) {
     <li key={id} className=" rounded-sm shadow-md hover:shadow-xl border hover:border-zinc-300">
             { (imagePath !== '') &&  
               <Link href={`/article/${post.slug}`}>
-                    <Image src={imagePath} alt="Article image"
+                <img src={imagePath} alt="Article image" className="tw-yves-img"/>
+                    {/* <Image src={imagePath} alt="Article image"
                         width={340}
                         height={190}
-                        className="border-none w-full rounded-t-sm object-cover my-2"/>
+                        className="border-none w-full rounded-t-sm object-cover my-2"/> */}
             </Link>
             }
       <div className=" pt-5 px-5 pb-7">

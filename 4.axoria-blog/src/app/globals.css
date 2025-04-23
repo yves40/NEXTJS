@@ -7,6 +7,12 @@ body {
 }
 /* Utils classes */
 
+.tw-yves-img {
+  @apply object-cover border-none rounded-3xl w-[320px] h-[240px] my-4
+          md:w-[640px] md:h-[480px];
+  border: blue 2px solid;
+}
+
 /* Layout */
 
 .u-main-container {
@@ -16,7 +22,7 @@ body {
   @apply pt-32 pb-44;
 }
 .u-articles-grid {
-  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mt-4 mb-12 list-none;
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 mt-4 mb-12 list-none;
 }
 
 /* Typographie */

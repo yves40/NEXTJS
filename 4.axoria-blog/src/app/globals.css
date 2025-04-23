@@ -9,8 +9,8 @@ body {
 
 .tw-yves-img {
   @apply object-cover border-none rounded-3xl w-[320px] h-[240px] my-4
-          md:w-[640px] md:h-[480px];
-  border: blue 2px solid;
+          md:w-[640px] md:h-[480px]
+          xl:w-[1024px] xl:h-[768px];
 }
 
 /* Layout */

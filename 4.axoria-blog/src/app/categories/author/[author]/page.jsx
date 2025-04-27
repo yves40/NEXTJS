@@ -4,7 +4,6 @@ import { getPostsByAuthor } from "@/lib/serverMethods/blog/postMethods";
 export default async function page({params}) {
   const {author} = await params;
   const postsData = await getPostsByAuthor(author);
-  console.log(postsData);
   
   return (
     <main className=" u-main-container u-padding-content-container">

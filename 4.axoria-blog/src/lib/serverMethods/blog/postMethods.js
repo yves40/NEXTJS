@@ -64,3 +64,21 @@ export async function getPostsByAuthor(normalizedUserName) {
         .sort({createdAt: -1});
         return {author, posts};
 }
+
+export async function getPostForEdit(slug) {
+        await connectToDB();
+        const post = await Post.findOne({slug})
+                .populate({
+                        path: "author",
+                        select: "userName normalizedUserName"
+                })
+                .populate({
+                        path: "tags",
+                        select: "name slug"
+                })
+        if(!post) {
+                return notFound();
+        }
+        return post;
+        
+}

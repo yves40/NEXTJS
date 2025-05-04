@@ -3,6 +3,7 @@
 import { addPost } from "@/lib/serverActions/blog/postServerActions"
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { areTagsSimilar } from "@/lib/utils/general/utils";
 
 export default function ClientEditForm({post}) {
 
@@ -22,8 +23,22 @@ export default function ClientEditForm({post}) {
   async function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);    
+    const readableFormData = Object.fromEntries(formData);  
+    const areSametags = areTagsSimilar(tags, post.tags); // tags modifications detection
+    if(readableFormData.imageFile.size === 0 && readableFormData.title.trim() === post.title
+                                              && readableFormData.markdownArticle.trim() === post.markdownArticle
+                                            && areSametags) {
+      serverValidationText.current.textContent = "Make a change on the article before submitting";
+      return;
+    }
+    else {
+      serverValidationText.current.textContent = "";
+      return;
+    }
+
     formData.set("tags", JSON.stringify(tags))  // To handle post creation without any tag !
                                                 // post model now contains a tags array property
+    formData.set("slug", post.slug);
     // Some UI reset
     serverValidationText.current.textContent = ""; // Reset message
     submitButtonRef.current.textContent = 'Updating post ...';
@@ -122,7 +137,10 @@ export default function ClientEditForm({post}) {
           placeholder="Your article title"
           defaultValue={post.title}/>
         { /* the article image */ }
-        <label htmlFor="imageFile" className="f-label">Cover image {imgMaxWidth} x {imgMaxHeight} Max : {imgMinWidth} x {imgMinHeight} Max</label>
+        <label htmlFor="imageFile" className="f-label">
+          <span>Cover image {imgMaxWidth} x {imgMaxHeight} Max : {imgMinWidth} x {imgMinHeight} Max</span>
+          <span className="block font-normal">{post.imageFile.length === 0 ? 'No image' : `Image file : ${post.imageFile}` }</span>
+        </label>
         <input 
           name="imageFile"
           className=" shadow cursor-pointer border rounded w-full p-3

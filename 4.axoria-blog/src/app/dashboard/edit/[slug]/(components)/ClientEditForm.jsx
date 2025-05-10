@@ -33,12 +33,12 @@ export default function ClientEditForm({post}) {
     }
     else {
       serverValidationText.current.textContent = "";
-      return;
     }
 
     formData.set("tags", JSON.stringify(tags))  // To handle post creation without any tag !
                                                 // post model now contains a tags array property
     formData.set("slug", post.slug);
+    formData.set("postToUpdate", post);
     // Some UI reset
     serverValidationText.current.textContent = ""; // Reset message
     submitButtonRef.current.textContent = 'Updating post ...';

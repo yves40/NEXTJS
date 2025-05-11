@@ -194,6 +194,7 @@ export async function updatePost(formData) {
   
   const { postToUpdateStringified, title, markdownArticle, imageFile, tags, currentImageFile} = Object.fromEntries(formData);
   const postToUpdate = JSON.parse(postToUpdateStringified);
+  console.log(`**************************** Debug :  ${JSON.stringify(postToUpdate)} **** ${imageFile.name === "undefined" ? 'pas de fichier choisi' : imageFile.name}`);
 
   try {
     await connectToDB();
@@ -215,40 +216,42 @@ export async function updatePost(formData) {
       updatedData.markdownArticle = markdownArticle;
     }
     // Image
-    // console.log(`**************************** Images :  ${currentImageFile} - ${imageFile.name}`);
+    console.log(`**************************** Images :  ${currentImageFile} - ${imageFile.name}`);
 
     if(typeof imageFile !== "object") throw new Error();
-    const validImagesTypes = [ "image/jpeg", "image/png", "image/webp", "image/jpg"];
-    if(!validImagesTypes.includes(imageFile.type)) {
-      throw new AppError('Supported images types are png, jpg, jpeg, webp');
+    if(imageFile.name !== "undefined") { // user changed the image file (possibly selecting the same one) ?
+      const validImagesTypes = [ "image/jpeg", "image/png", "image/webp", "image/jpg"];
+      if(!validImagesTypes.includes(imageFile.type)) {
+        throw new AppError('Supported images types are png, jpg, jpeg, webp');
+      }
+      const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+      const { width, height } = await sharp(imageBuffer).metadata();
+      if(width > imgMaxWidth || height > imgMaxHeight) {
+        throw new AppError('Image too big');
+      }
+      if(width < imgMinWidth || height < imgMinHeight) {
+        throw new AppError('Image too small');
+      }
+      // Ok for all image checks : Delete previous imgae file and add the new one
+      if(postToUpdate.imageFile.length !== 0) {
+        const thepath = path.join( uploadPath, currentImageFile);
+        await unlink(thepath, (error) => {
+          throw new AppError(`Unable to delete the previous image file !!!`);  
+        });
+        console.log(`${modulename} deleted previous file : ${currentImageFile}`);
+      }
+      let uniqueFilename = '';    
+      uniqueFilename = `${crypto.randomUUID()}_${imageFile.name}`;  // Build a unique file name      
+      try {
+        const thepath = path.join( uploadPath, uniqueFilename);
+        await writeFile(thepath, imageBuffer);
+      }
+      catch(error) {
+        console.log(error.message);
+        throw new AppError(`Unable to write the new image file !!!`);
+      }      
+      updatedData.imageFile = uniqueFilename;      
     }
-    const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
-    const { width, height } = await sharp(imageBuffer).metadata();
-    if(width > imgMaxWidth || height > imgMaxHeight) {
-      throw new AppError('Image too big');
-    }
-    if(width < imgMinWidth || height < imgMinHeight) {
-      throw new AppError('Image too small');
-    }
-    // Ok for all image checks : Delete previous imgae file and add the new one
-    if(postToUpdate.imageFile.length !== 0) {
-      const thepath = path.join( uploadPath, currentImageFile);
-      await unlink(thepath, (error) => {
-        throw new AppError(`Unable to delete the previous image file !!!`);  
-      });
-      console.log(`${modulename} deleted previous file : ${currentImageFile}`);
-    }
-    let uniqueFilename = '';    
-    uniqueFilename = `${crypto.randomUUID()}_${imageFile.name}`;  // Build a unique file name      
-    try {
-      const thepath = path.join( uploadPath, uniqueFilename);
-      await writeFile(thepath, imageBuffer);
-    }
-    catch(error) {
-      console.log(error.message);
-      throw new AppError(`Unable to write the new image file !!!`);
-    }      
-    updatedData.imageFile = uniqueFilename;     
     // tags
     if(typeof tags !== 'string') throw new Error();
     const tagsNamesArray = JSON.parse(tags);  // Convert to js array

@@ -50,7 +50,6 @@ export async function addPost(formData) {
     }
     await connectToDB();
     const session = await sessionInfo();
-    console.log(session);
     
     if(!session.success) {
       throw new AppError('Authentication required');
@@ -58,13 +57,9 @@ export async function addPost(formData) {
     // Manage image upload
     // 1st check image characteristics if transmitted    
     let uniqueFilename = '';    
-    
     if(!(imageFile instanceof File)) {
       throw new AppError('Invalid image data');
-    }
-
-    console.log(`${modulename} the file candidate for upload: ${imageFile.name} / ${imageFile.name.length}`);
-    
+    }    
     if(imageFile.name !== 'undefined') {    // Any file chosen ? 
       const validImagesTypes = [ "image/jpeg", "image/png", "image/webp", "image/jpg"];
       if(!validImagesTypes.includes(imageFile.type)) {
@@ -142,7 +137,6 @@ export async function addPost(formData) {
       author: session.userId
     })
     const savedPost = await newPost.save();    
-    console.log(`${DEBUGTAG} Object saved ${JSON.stringify(newPost)}`);
     return { success: true, slug: newPost.slug }
   }
   catch(error) {
@@ -157,9 +151,6 @@ export async function addPost(formData) {
 export async function deletePost(id) {
 
   const uploadPath = path.join(process.cwd(), "/public/blogimages/");
-
-  console.log(`${modulename} deleting post with ID : ${id}`);
-
   try {
     await connectToDB();
     const user = await sessionInfo();
@@ -194,7 +185,6 @@ export async function updatePost(formData) {
   
   const { postToUpdateStringified, title, markdownArticle, imageFile, tags, currentImageFile} = Object.fromEntries(formData);
   const postToUpdate = JSON.parse(postToUpdateStringified);
-  console.log(`**************************** Debug :  ${JSON.stringify(postToUpdate)} **** ${imageFile.name === "undefined" ? 'pas de fichier choisi' : imageFile.name}`);
 
   try {
     await connectToDB();
@@ -216,8 +206,6 @@ export async function updatePost(formData) {
       updatedData.markdownArticle = markdownArticle;
     }
     // Image
-    console.log(`**************************** Images :  ${currentImageFile} - ${imageFile.name}`);
-
     if(typeof imageFile !== "object") throw new Error();
     if(imageFile.name !== "undefined") { // user changed the image file (possibly selecting the same one) ?
       const validImagesTypes = [ "image/jpeg", "image/png", "image/webp", "image/jpg"];
@@ -258,7 +246,7 @@ export async function updatePost(formData) {
     if(!Array.isArray(tagsNamesArray)) throw new Error();
     // Now check for any change in tags
     if(!areTagsSimilar(tagsNamesArray, postToUpdate.tags)) {
-      const tagIds = await Promise.all(tagsNamesArray.map(tag => findOrCreateTag(tag)));
+      let tagIds = await Promise.all(tagsNamesArray.map(tag => findOrCreateTag(tag)));
       updatedData.tags = tagIds;
     }
     // Final update 

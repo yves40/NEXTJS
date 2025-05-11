@@ -17,8 +17,9 @@ import sharp from "sharp";
 import crypto from "crypto";
 import { writeFile, unlink } from "fs/promises";
 import path from "path";
-import { generateUniqueSlug } from "@/lib/utils/general/utils";
-
+import { areTagsSimilar, generateUniqueSlug } from "@/lib/utils/general/utils";
+import { findOrCreateTag } from "@/lib/serverMethods/tag/tagMethods";
+ 
 // This code is used to cleanup HTML from potential XSS attacks
 // As it is executed on the server side, the first step is to create a DOM onto which 
 // cleaning will take place.
@@ -28,14 +29,14 @@ const imgMaxWidth = 4200;
 const imgMaxHeight = 2800;
 const imgMinWidth = 128;
 const imgMinHeight = 128;
+const uploadPath = path.join(process.cwd(), "/public/blogimages/");
 
-const modulename = "***** SERVERACTIONS # ";
+const modulename = "***** postServerActions ##### ";
 const DEBUGTAG = "***** DEBUG #";
 
 export async function addPost(formData) { 
   
-  const { title, markdownArticle, tags, imageFile} = Object.fromEntries(formData);
-  const uploadPath = path.join(process.cwd(), "/public/blogimages/");
+  const { title, markdownArticle, tags, imageFile } = Object.fromEntries(formData);
 
   try {
     
@@ -106,7 +107,8 @@ export async function addPost(formData) {
       let tag = await Tag.findOne({ name: normalizedTagName});  // Tag exists ? 
       if(!tag) {
         // No, create it
-        tag = await Tag.create( { name: normalizedTagName, slug: slugify(normalizedTagName, { strict: true})});
+        const tagSlug = slugify(normalizedTagName, { lower: true, strict: true});
+        tag = await Tag.create( { name: normalizedTagName, slug: tagSlug});
       }
       return tag._id;
     }))
@@ -189,8 +191,9 @@ export async function deletePost(id) {
 }
 
 export async function updatePost(formData) {
-
-  const { postToUpdate, slug, title, markdownArticle, imageFile, tags} = Object.fromEntries(formData);
+  
+  const { postToUpdateStringified, title, markdownArticle, imageFile, tags, currentImageFile} = Object.fromEntries(formData);
+  const postToUpdate = JSON.parse(postToUpdateStringified);
 
   try {
     await connectToDB();
@@ -212,6 +215,8 @@ export async function updatePost(formData) {
       updatedData.markdownArticle = markdownArticle;
     }
     // Image
+    // console.log(`**************************** Images :  ${currentImageFile} - ${imageFile.name}`);
+
     if(typeof imageFile !== "object") throw new Error();
     const validImagesTypes = [ "image/jpeg", "image/png", "image/webp", "image/jpg"];
     if(!validImagesTypes.includes(imageFile.type)) {
@@ -225,14 +230,15 @@ export async function updatePost(formData) {
     if(width < imgMinWidth || height < imgMinHeight) {
       throw new AppError('Image too small');
     }
-    // Ok for all checks : Delete previous imgae file and add the new one
+    // Ok for all image checks : Delete previous imgae file and add the new one
     if(postToUpdate.imageFile.length !== 0) {
-      const thepath = path.join( uploadPath, postToUpdate.imageFile);
+      const thepath = path.join( uploadPath, currentImageFile);
       await unlink(thepath, (error) => {
         throw new AppError(`Unable to delete the previous image file !!!`);  
       });
-      console.log(`${modulename} deleted previous file : ${post.imageFile}`);
+      console.log(`${modulename} deleted previous file : ${currentImageFile}`);
     }
+    let uniqueFilename = '';    
     uniqueFilename = `${crypto.randomUUID()}_${imageFile.name}`;  // Build a unique file name      
     try {
       const thepath = path.join( uploadPath, uniqueFilename);
@@ -243,8 +249,19 @@ export async function updatePost(formData) {
       throw new AppError(`Unable to write the new image file !!!`);
     }      
     updatedData.imageFile = uniqueFilename;     
-    console.log(updatedData);
-    
+    // tags
+    if(typeof tags !== 'string') throw new Error();
+    const tagsNamesArray = JSON.parse(tags);  // Convert to js array
+    if(!Array.isArray(tagsNamesArray)) throw new Error();
+    // Now check for any change in tags
+    if(!areTagsSimilar(tagsNamesArray, postToUpdate.tags)) {
+      const tagIds = await Promise.all(tagsNamesArray.map(tag => findOrCreateTag(tag)));
+      updatedData.tags = tagIds;
+    }
+    // Final update 
+    if(Object.keys(updatedData).length === 0) throw new Error();
+    const updatedPost = await Post.findOneAndUpdate(postToUpdate, updatedData, { new: true });
+    return { success: true, slug: updatedPost.slug};
   }
   catch(error) {
     console.log(`Error while updating the post ${error}`);

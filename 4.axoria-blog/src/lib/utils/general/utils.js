@@ -1,4 +1,5 @@
-
+import slugify from "slugify";
+import { Post } from "@/lib/models/post";
 // This function compares 2 tags array, one from UI, one from DB
 export function areTagsSimilar(userTagsArray, DBTagsArray) {
   

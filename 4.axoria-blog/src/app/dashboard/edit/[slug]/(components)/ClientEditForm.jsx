@@ -1,14 +1,15 @@
 "use client"
 
-import { addPost } from "@/lib/serverActions/blog/postServerActions"
+import { updatePost } from "@/lib/serverActions/blog/postServerActions"
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { areTagsSimilar } from "@/lib/utils/general/utils";
 
 export default function ClientEditForm({post}) {
 
-  const modulename = "***** BLOG # ";
+  const modulename = "***** ClientEditForm.jsx # ";
   const [tags, setTags] = useState(post.tags.map(tag => tag.name));
+  const currentImageFile = post.imageFile;
   const tagInputRef = useRef(null);
   const submitButtonRef = useRef(null);
   const serverValidationText = useRef(null);
@@ -37,15 +38,15 @@ export default function ClientEditForm({post}) {
 
     formData.set("tags", JSON.stringify(tags))  // To handle post creation without any tag !
                                                 // post model now contains a tags array property
-    formData.set("slug", post.slug);
-    formData.set("postToUpdate", post);
+    formData.set("postToUpdateStringified", JSON.stringify(post));
+    formData.set("currentImageFile", currentImageFile);
     // Some UI reset
     serverValidationText.current.textContent = ""; // Reset message
     submitButtonRef.current.textContent = 'Updating post ...';
     submitButtonRef.current.disabled = true;  // Post sent, button is inactive
 
     try {
-      const result = await addPost(formData);
+      const result = await updatePost(formData);
       if(result.success) {
         submitButtonRef.current.textContent = 'Post updated ✅';
         let countdown = 3;

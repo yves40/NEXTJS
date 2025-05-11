@@ -27,7 +27,7 @@ export default async function BlogCard({post, id}) {
       <div className=" pt-5 px-5 pb-7">
         <div className="flex items-baseline gap-x-4 text-xs">
           <time dateTime={post.createdAt} className=" text-gray-500 text-sm">
-            {new Date(post.createdAt).toLocaleDateString("en-EN", {
+            {new Date(post.updatedAt).toLocaleDateString("en-EN", {
               year: "numeric",
               month: "long",
               day: "numeric",

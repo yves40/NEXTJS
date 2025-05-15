@@ -14,7 +14,6 @@ export async function middleware(req) {
     }
   );
   const { authorized } = await authResponse.json();
-  console.log('********************* MIDDLEWARE',  authorized);
   if (!authorized) {
     return NextResponse.redirect(`${req.nextUrl.origin}/signin`, req.url);
   }

@@ -9,7 +9,6 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    
     const sessionId = cookieStore.get("sessionId")?.value;
     if(!sessionId) {
       return NextResponse.json({authorized: false, status:401});

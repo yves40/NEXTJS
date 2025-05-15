@@ -7,6 +7,7 @@ import slugify from "slugify";
 import bcrypt from 'bcryptjs';
 import { cookies } from "next/headers";
 import AppError from "@/lib/utils/errorHandling/customError";
+import { revalidateTag } from "next/cache";
 
 
 const modulename = "SECURITY # ";
@@ -82,22 +83,22 @@ export async function login(formData) {
         }
         // User authenticated. Create a session and a cookie or update an existing session
         // for this user ( in the DB )
-        console.log(`${modulename} search a session with userId : ${user._id}`);        
+        // console.log(`${modulename} search a session with userId : ${user._id}`);
         let session;
         const existingSession = await Session.findOne({
             userId: user._id,
             expiresAt: { $gt : new Date()} // Check the expire date of the existing session is not expired
         })
-        console.log(`${modulename} Existing session ${existingSession ? existingSession._id : 'New session created'}`);       
+        // console.log(`${modulename} Existing session ${existingSession ? existingSession._id : 'New session created'}`);       
         if(existingSession) {   // Update the existing session
-            console.log(`${modulename} Updating existing session in Mongo for user ${user.userName}`);            
+            // console.log(`${modulename} Updating existing session in Mongo for user ${user.userName}`);            
             session = await Session.findOneAndUpdate({ 
                 userId: user._id,
                 expiresAt: new Date(Date.now() + DBExpirationDelay)
             });
         }
         else {
-            console.log(`${modulename} Creating a session in Mongo for user ${user.userName}`);            
+            // console.log(`${modulename} Creating a session in Mongo for user ${user.userName}`);            
             session = new Session( { 
                 userId: user._id,
                 expiresAt: new Date(Date.now() + DBExpirationDelay)
@@ -113,6 +114,7 @@ export async function login(formData) {
             maxAge: CookieExpirationDelay,   // One day persistence
             sameSite: "Lax" // To block CSRF attacks. Cookie is sent only to our site. Look at https://contentsquare.com/fr-fr/blog/samesite-cookie-attribute/
         });
+        revalidateTag("auth-session");  // gestion du cache NextJS
         return { success: true };
     }
     catch(error) {
@@ -136,6 +138,7 @@ export async function logout() {
             maxAge: 0,  // maxAge set to 0 deletes the cookie
             sameSite: "strict"
         });
+        revalidateTag("auth-session");  // gestion du cache NextJS
         return { success: true }
     }
     catch(error) {

@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { logout, isPrivatePage } from "@/lib/serverActions/session/sessionServerAction"
+import { useAuth } from "@/app/AuthContext"
 
 const modulename = "UIX # ";
 
@@ -13,6 +14,7 @@ export default function NavbarDropdown({userId}) {
     const [isOpen, setIsOpen ] = useState(false);
     const dropDownRef = useRef();
     const router = useRouter();
+    const {setIsAuthenticated} = useAuth();
 
     // Close Dropdown
     function closeDropDown() {
@@ -37,6 +39,11 @@ export default function NavbarDropdown({userId}) {
     // Manage logout
     async function handleLogout() {
         await logout();
+        setIsAuthenticated({
+            loading: false,
+            isConnected: false,
+            userId: null
+        });
         if(await isPrivatePage(window.location.pathname)) {
             console.log(`${modulename} ${window.location.pathname} is a private page`);
             router.push('/signin');

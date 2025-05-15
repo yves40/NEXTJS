@@ -105,7 +105,7 @@ export async function login(formData) {
             })
             await session.save();   // Push to mongo
         }
-        console.log(`${modulename} Set cookie for ${user.userName}`);            
+        // console.log(`${modulename} Set cookie for ${user.userName}`);            
         const cookieStore = await cookies();
         cookieStore.set('sessionId', session.userId.toString(), { 
             httpOnly: true, // No JS access
@@ -162,4 +162,33 @@ export async function isPrivatePage(pathname) {
     });
     return privateSegments.some(segment => pathname === segment || 
         pathname.startsWith(segment + "/")); // Waouh !!!
+}
+
+export async function SAsessionInfo() {
+
+    const cookieStore = await cookies();
+    const userCookieId = cookieStore.get("sessionId")?.value;
+
+    if (!userCookieId) {  // No cookie yet !
+        console.log(`${modulename} user KO : Navigator sessionCookie`);      
+        return { success: false };
+    }
+    await connectToDB();
+    // Check the user session in the DB
+    const session = await Session.findOne({ userId: userCookieId });
+    if(!session || session.expiresAt < new Date()) { // Inexistent or expired session ?
+        return { success: false };
+    }
+    // Check the user tied to this session
+    const user = await User.findById(session.userId);
+    if(!user) {
+        console.log(`${modulename} user KO : DB user not found`);      
+        return { success: false, userId: null };
+    }
+    else {
+        return { success: true, userId: user._id.toString(), 
+            userName: user.userName,
+            NormalizedUserName: user.normalizedUserName
+         };
+    }
 }

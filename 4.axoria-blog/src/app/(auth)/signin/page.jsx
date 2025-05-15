@@ -4,8 +4,10 @@ import { useRef } from "react";
 import Link from 'next/link';
 import { login } from "@/lib/serverActions/session/sessionServerAction";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/AuthContext";
 
 export default function page() {
+  const {setIsAuthenticated} = useAuth();
   const userName = useRef('');
   const password = useRef('');
   const submitButton = useRef('');
@@ -23,6 +25,7 @@ export default function page() {
       try {
         const result = await login(new FormData(e.target));
         if(result.success) {
+          setIsAuthenticated({ loading: false, isConnected: true, userId: result.userId});
           router.push('/');
         }
       }

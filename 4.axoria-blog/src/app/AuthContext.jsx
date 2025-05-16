@@ -10,7 +10,8 @@ export function AuthProvider({children}) {
   const [isAuthenticated, setIsAuthenticated] = useState( {
     loading: true,
     isConnected: false,
-    userId: null
+    userId: null,
+    userName: null
   })
 
   useEffect( () => {
@@ -19,6 +20,7 @@ export function AuthProvider({children}) {
       setIsAuthenticated({
         loading: false,
         isConnected: session.success,
+        userName: session.userName,
         userId: session.userId
       })
     }

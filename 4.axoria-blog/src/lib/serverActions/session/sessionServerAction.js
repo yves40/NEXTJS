@@ -115,7 +115,7 @@ export async function login(formData) {
             sameSite: "Lax" // To block CSRF attacks. Cookie is sent only to our site. Look at https://contentsquare.com/fr-fr/blog/samesite-cookie-attribute/
         });
         revalidateTag("auth-session");  // gestion du cache NextJS
-        return { success: true };
+        return { success: true, userId: user._id.toString(), userName: user.normalizedUserName };
     }
     catch(error) {
         console.log('Error while login');

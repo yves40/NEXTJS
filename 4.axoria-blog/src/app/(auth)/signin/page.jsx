@@ -25,7 +25,7 @@ export default function page() {
       try {
         const result = await login(new FormData(e.target));
         if(result.success) {
-          setIsAuthenticated({ loading: false, isConnected: true, userId: result.userId});
+          setIsAuthenticated({ loading: false, isConnected: true, userId: result.userId, userName: result.userName});
           router.push('/');
         }
       }

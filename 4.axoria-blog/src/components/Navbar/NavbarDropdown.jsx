@@ -38,18 +38,12 @@ export default function NavbarDropdown({userId}) {
     }
     // Manage logout
     async function handleLogout() {
-        await logout();
-        setIsAuthenticated({
-            loading: false,
-            isConnected: false,
-            userId: null
-        });
-        if(await isPrivatePage(window.location.pathname)) {
-            console.log(`${modulename} ${window.location.pathname} is a private page`);
-            router.push('/signin');
-        }
-        else {
-            console.log(`${modulename} ${window.location.pathname} is a public page`);
+        const result = await logout();
+        if(result.success) {
+            setIsAuthenticated({loading: false, isConnected: false, userId: null });
+            if(isPrivatePage(window.location.pathname)) {
+                router.push('/signin');
+            }
         }
     }    
 

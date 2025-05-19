@@ -9,9 +9,7 @@ const modulename = 'Navbar.jsx # ';
 
 export default function Navbar() {
 
-  const {isAuthenticated} = useAuth();
-  console.log(`${modulename} ${isAuthenticated.isConnected}` );
-  
+  const {isAuthenticated} = useAuth();  
 
   return (
     // u-main-container is defined in globals.css 

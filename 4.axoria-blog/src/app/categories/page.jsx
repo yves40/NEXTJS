@@ -1,6 +1,9 @@
 import { getTags } from "@/lib/serverMethods/blog/tagMethods"
 import Link from "next/link";
 
+
+export const revalidate = 60;   // Check nextJS cache every minute
+
 export default async function page() {
 
   const tags = await getTags();  

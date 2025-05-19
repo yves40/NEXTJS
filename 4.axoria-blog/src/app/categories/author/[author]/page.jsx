@@ -1,6 +1,9 @@
 import BlogCard from "@/components/BlogCard";
 import { getPostsByAuthor } from "@/lib/serverMethods/blog/postMethods";
 
+
+export const revalidate = 60;   // Check nextJS cache every minute
+
 export default async function page({params}) {
   const {author} = await params;
   const postsData = await getPostsByAuthor(author);

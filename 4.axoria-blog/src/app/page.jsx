@@ -3,6 +3,8 @@ import { getPosts } from "@/lib/serverMethods/blog/postMethods";
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import BlogCard from "@/components/BlogCard";
 
+export const revalidate = 60;   // Check nextJS cache every minute
+
 export default async function Home() {
 
   connectToDB();

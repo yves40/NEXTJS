@@ -13,7 +13,7 @@ export default function Navbar() {
 
   return (
     // u-main-container is defined in globals.css 
-    <nav className=" fixed w-full bg-slate-50 border-b border-b-zinc-300">
+    <nav className=" fixed z-10 w-full bg-slate-50 border-b border-b-zinc-300">
       <div className="u-main-container flex py-4">
           <Link href="/" className=" mr-2 text-zinc-900">AXORIA</Link>
           <Link href="/categories" className=" mx-2 text-zinc-900 mr-auto">Categories</Link>

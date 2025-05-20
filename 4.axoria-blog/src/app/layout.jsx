@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
             Le grow permet de faire grandir la section main en fonction de la hauteur
             spécifiée par min-h-full et h-full sur le body et le html
           */}
-          <main className="grow">
+          <main className="grow relative">
             {children}
           </main>
         </AuthProvider>

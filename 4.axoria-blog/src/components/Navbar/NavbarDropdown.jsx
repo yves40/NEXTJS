@@ -41,7 +41,7 @@ export default function NavbarDropdown({userId}) {
         const result = await logout();
         if(result.success) {
             setIsAuthenticated({loading: false, isConnected: false, userId: null });
-            if(isPrivatePage(window.location.pathname)) {
+            if(await isPrivatePage(window.location.pathname)) {
                 router.push('/signin');
             }
         }

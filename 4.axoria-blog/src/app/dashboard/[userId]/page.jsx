@@ -19,7 +19,7 @@ export default async function Dashboard({params}) {
               <Link className=" mr-auto underline underline-offset-2 text-violet-600" rel="stylesheet" href={`/article/${post.slug}`}>
                 {post.title}
               </Link>
-              <Link href={`/dashboard/edit/${post.slug}`} className=" bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded mr-2 
+              <Link href={`/dashboard/edit/${post._id}`} className=" bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded mr-2 
                           text-center min-w-24">
                 Edit
               </Link>

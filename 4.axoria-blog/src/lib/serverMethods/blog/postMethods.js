@@ -5,6 +5,7 @@ import { User } from "@/lib/models/user";
 import { notFound } from "next/navigation";
 
 const modulename = "POST #";
+export const dynamic = "force-static";  // Next cache specification
 
 export async function getPost(slug) {
         await connectToDB();
@@ -65,9 +66,9 @@ export async function getPostsByAuthor(normalizedUserName) {
         return {author, posts};
 }
 
-export async function getPostForEdit(slug) {
+export async function getPostForEdit(id) {
         await connectToDB();
-        const post = await Post.findOne({slug})
+        const post = await Post.findOne({_id: id})
                 .populate({
                         path: "author",
                         select: "userName normalizedUserName"

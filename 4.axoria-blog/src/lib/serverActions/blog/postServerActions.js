@@ -19,6 +19,7 @@ import { writeFile, unlink } from "fs/promises";
 import path from "path";
 import { areTagsSimilar, generateUniqueSlug } from "@/lib/utils/general/utils";
 import { findOrCreateTag } from "@/lib/serverMethods/tag/tagMethods";
+import { revalidatePath } from "next/cache";
  
 // This code is used to cleanup HTML from potential XSS attacks
 // As it is executed on the server side, the first step is to create a DOM onto which 
@@ -252,6 +253,8 @@ export async function updatePost(formData) {
     // Final update 
     if(Object.keys(updatedData).length === 0) throw new Error();
     const updatedPost = await Post.findOneAndUpdate(postToUpdate, updatedData, { new: true });
+    revalidatePath(`/article/${postToUpdate.slug}`);  // Cleanup nextJS cache 
+
     return { success: true, slug: updatedPost.slug};
   }
   catch(error) {
